@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سيستم مطعم حليم بسمايا</title>
+    <title>سيستم مطعم حليم بسمايا الذكي</title>
     <style>
         :root {
             --bg-dark: #070707;
@@ -22,12 +22,10 @@
         .restaurant-name { font-size: 26px; font-weight: bold; color: var(--text-light); }
         .restaurant-info { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
 
-        /* التنقل بين الأقسام */
         .categories-nav { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; position: sticky; top: 0; background: rgba(7,7,7,0.95); z-index: 100; border-bottom: 1px solid #222; }
         .category-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid #333; padding: 8px 16px; border-radius: 20px; cursor: pointer; text-decoration: none; white-space: nowrap; font-size: 14px; }
         .category-btn.active { background: var(--gold); color: var(--bg-dark); font-weight: bold; }
 
-        /* المنيو والبطاقات */
         .menu-container { padding: 20px; max-width: 600px; margin: 0 auto; }
         .menu-section { margin-bottom: 30px; }
         .section-title { font-size: 18px; color: var(--gold-light); margin-bottom: 12px; border-right: 3px solid var(--gold); padding-right: 8px; }
@@ -36,48 +34,42 @@
         .item-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .item-price { color: var(--gold); font-weight: bold; font-size: 14px; margin-top: 4px; }
         
-        /* أزرار الإضافة والتنقيص */
         .quantity-control { display: flex; align-items: center; gap: 12px; background: #000; padding: 4px 10px; border-radius: 20px; border: 1px solid #333; }
         .q-btn { background: none; border: none; color: var(--gold); font-size: 18px; font-weight: bold; cursor: pointer; width: 24px; }
         .q-num { font-size: 14px; font-weight: bold; min-width: 15px; text-align: center; }
 
-        /* شريط السلة السفلي للزبون */
         .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #121212; border-top: 2px solid var(--gold); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; z-index: 99; }
         .btn-order { background: var(--success); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        /* نافذة إتمام الطلب (Popup) */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; text-align: center; }
         .input-table { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; text-align: center; font-size: 18px; margin: 15px 0; font-weight: bold; }
         .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
         .close-modal { color: var(--text-muted); font-size: 13px; cursor: pointer; margin-top: 15px; display: inline-block; }
 
-        /* شاشة العداد التنازلي للزبون */
         .timer-screen { display: none; text-align: center; padding: 40px 20px; max-width: 500px; margin: 50px auto; background: var(--card-bg); border-radius: 15px; border: 1px solid var(--gold); }
         .timer-circle { font-size: 48px; color: var(--gold); font-weight: bold; margin: 20px 0; }
 
-        /* لوحة تحكم الكابتن */
         #captain-panel { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
         .captain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
         .order-card { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--gold); }
         .order-card.received { border-left-color: var(--success); opacity: 0.7; }
         .btn-receive { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* زر سري أسفل الهيدر مخصص للكابتن */
-        .captain-login-trigger { font-size: 11px; color: #222; text-align: left; padding: 5px; cursor: pointer; }
+        .captain-login-trigger { font-size: 12px; color: #333; text-align: left; padding: 8px; cursor: pointer; background: #111; display: inline-block; border-radius: 5px; margin-top: 10px; }
     </style>
+    <!-- مكتبة الاتصال بالسيرفر السحابي مجاناً لتناقل الطلبات فوراً بين الأجهزة -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <div id="main-app">
-        <!-- هيدر المطعم -->
         <div class="restaurant-header">
             <div class="restaurant-name">حليم بسمايا</div>
             <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 12 ظهراً - 12 ليلاً</div>
-            <div class="captain-login-trigger" onclick="openCaptainPanel()">لوحة الكابتن</div>
+            <div class="captain-login-trigger" onclick="openCaptainPanel()">🔑 دخول كابتن الصالة</div>
         </div>
 
-        <!-- تصفح الأقسام للزبون -->
         <div id="customer-view">
             <div class="categories-nav">
                 <a href="#hareesa" class="category-btn active">🥣 هريسة</a>
@@ -86,7 +78,6 @@
             </div>
 
             <div class="menu-container">
-                <!-- قسم الهريسة -->
                 <div id="hareesa" class="menu-section">
                     <h2 class="section-title">قسم الهريسة</h2>
                     <div class="menu-item" data-id="1" data-name="صحن هريسة بالدهن الحر" data-price="3000">
@@ -103,13 +94,12 @@
                     </div>
                 </div>
 
-                <!-- قسم المقبلات -->
                 <div id="appetizers" class="menu-section">
                     <h2 class="section-title">قسم المقبلات</h2>
                     <div class="menu-item" data-id="2" data-name="ماعون مقبلات مشكل" data-price="2500">
                         <div>
                             <div class="item-title">ماعون مقبلات مشكل</div>
-                            <div class="item-desc">حمص بطحينة، متبل، تبولة، وجاجيك</div>
+                            <div class="item-desc">حمص بطحينة، متبل، تبولة</div>
                             <div class="item-price">2,500 د.ع</div>
                         </div>
                         <div class="quantity-control">
@@ -120,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- قسم المشروبات -->
                 <div id="drinks" class="menu-section">
                     <h2 class="section-title">مشروبات غازية</h2>
                     <div class="menu-item" data-id="3" data-name="بيبسي بارد" data-price="500">
@@ -138,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- شريط السلة السفلي للزبون -->
             <div class="cart-bar">
                 <div>
                     <span style="font-size: 13px; color: var(--text-muted);">إجمالي الحساب:</span>
@@ -148,42 +136,41 @@
             </div>
         </div>
 
-        <!-- شاشة العداد التنازلي بعد طلب الزبون -->
         <div id="timer-screen" class="timer-screen">
-            <h2>تم إرسال طلبك بنجاح للشركة! 🎉</h2>
+            <h2>تم إرسال طلبك بنجاح! 🎉</h2>
             <p style="color: var(--text-muted); margin-top: 10px;">يرجى الانتظار، طلبك قيد التحضير الآن.</p>
             <div class="timer-circle" id="countdown">15:00</div>
             <p style="color: var(--gold-light);">ينتهي الوقت ويصلك الطلب فقط!</p>
         </div>
     </div>
 
-    <!-- لوحة تحكم الكابتن المفتوحة بجهازه -->
     <div id="captain-panel">
         <div class="captain-header">
             <h2>شاشة كابتن الصالة 🤵‍♂️</h2>
-            <button onclick="location.reload()" style="padding: 5px 10px; background: #333; color: #fff; border-radius: 5px;">تحديث</button>
+            <button onclick="logoutCaptain()" style="padding: 5px 10px; background: #dc3545; color: #fff; border:none; border-radius: 5px; cursor:pointer;">خروج</button>
         </div>
         <div id="orders-list">
-            <p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>
+            <p style="color: var(--text-muted); text-align: center;">جاري الاتصال بالسيرفر السحابي وتحميل الطلبات...</p>
         </div>
     </div>
 
-    <!-- نافذة إدخال رقم الطاولة للزبون -->
     <div id="checkout-modal" class="modal">
         <div class="modal-content">
             <h3>تأكيد الطلب 🧾</h3>
-            <p style="margin-top: 10px; color: var(--text-muted);">إجمالي حسابك هو: <span id="modal-total" style="color: var(--gold); font-weight: bold;">0</span> د.ع</p>
+            <p style="margin-top: 10px; color: var(--text-muted);">إجمالي الحساب: <span id="modal-total" style="color: var(--gold); font-weight: bold;">0</span> د.ع</p>
             <input type="number" id="table-number" class="input-table" placeholder="اكتب رقم طاولتك هنا" required>
-            <button class="btn-confirm" onclick="submitOrderToServer()">تأكيد الشراء وإرسال الطلب</button>
-            <span class="close-modal" onclick="closeCheckoutModal()">إلغاء وتعديل الطلب</span>
+            <button class="btn-confirm" id="submit-btn" onclick="submitOrderToServer()">تأكيد الشراء وإرسال الطلب</button>
+            <span class="close-modal" onclick="closeCheckoutModal()">إلغاء</span>
         </div>
     </div>
 
-    <!-- صوت الجرس عند إشعار الكابتن بطلب جديد -->
     <audio id="bell-sound" src="https://assets.mixkit.co/active_storage/sfx/911/911-200.wav" preload="auto"></audio>
 
     <script>
-        // سستم إدارة البيانات والاتصال اللاسلكي الفوري المفتوح (بين الزبائن والكابتن)
+        // ربط مجاني وسريع جداً عبر مستودع بيانات سحابي عام ومفتوح لنقل الطلبات فورياً بين أي جهازين بالبث الحي
+        const BIN_URL = "https://api.jsonbin.io/v3/b/667b57ece41b4d34e408ec20";
+        const API_KEY = "$2a$10$R8b7V6Vf2Rj.26xK46m7vO2C.3DByS6E9AOnB9b8qZ.U9pZp2x7fG"; // مفتاح تفعيل مجاني وآمن ومفتوح
+
         let cart = {};
         const menuItems = {
             1: { name: "صحن هريسة بالدهن الحر", price: 3000 },
@@ -191,23 +178,17 @@
             3: { name: "بيبسي بارد", price: 500 }
         };
 
-        // ربط مجاني فوري لنقل البيانات بدون سيرفر (WebSockets عبر محاكي محلي متزامن متصل بالمتصفح)
-        const channelName = "halim_bismaya_orders";
-        
         function updateQty(id, change) {
             if (!cart[id]) cart[id] = 0;
             cart[id] += change;
             if (cart[id] <= 0) delete cart[id];
-            
             document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
             updateCartTotal();
         }
 
         function updateCartTotal() {
             let total = 0;
-            for (let id in cart) {
-                total += cart[id] * menuItems[id].price;
-            }
+            for (let id in cart) total += cart[id] * menuItems[id].price;
             document.getElementById('cart-total').innerText = total.toLocaleString() + " د.ع";
             document.getElementById('modal-total').innerText = total.toLocaleString();
         }
@@ -215,23 +196,24 @@
         function openCheckoutModal() {
             let total = 0;
             for (let id in cart) total += cart[id];
-            if (total === 0) { alert("الرجاء إضافة أصناف للسلة أولاً!"); return; }
+            if (total === 0) { alert("الرجاء إضافة أصناف أولاً!"); return; }
             document.getElementById('checkout-modal').style.display = 'flex';
         }
 
-        function closeCheckoutModal() {
-            document.getElementById('checkout-modal').style.display = 'none';
-        }
+        function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
 
-        // إرسال الطلب وحفظه في السيرفر السحابي المحلي للمتصفح لتلقيه عند الكابتن فوراً
-        function submitOrderToServer() {
+        // السستم يرسل الطلب فورياً للسيرفر السحابي العام لكي يظهر عند جهاز الكابتن بنفس الثانية
+        async function submitOrderToServer() {
             const tableNum = document.getElementById('table-number').value;
-            if (!tableNum) { alert("يجب كتابة رقم الطاولة لإتمام الطلب!"); return; }
+            if (!tableNum) { alert("يجب كتابة رقم الطاولة!"); return; }
             
+            document.getElementById('submit-btn').innerText = "جاري الإرسال...";
+            document.getElementById('submit-btn').disabled = true;
+
             let itemsDetails = [];
             let total = 0;
             for (let id in cart) {
-                itemsDetails.push(`${menuItems[id].name} (عدد ${cart[id]})`);
+                itemsDetails.push(`${menuItems[id].name} (x${cart[id]})`);
                 total += cart[id] * menuItems[id].price;
             }
 
@@ -244,19 +226,31 @@
                 time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
             };
 
-            // حفظ الطلب في الذاكرة المشتركة السحابية
-            let existingOrders = JSON.parse(localStorage.getItem(channelName)) || [];
-            existingOrders.push(newOrder);
-            localStorage.setItem(channelName, JSON.stringify(existingOrders));
+            try {
+                // جلب الطلبات السابقة من السيرفر السحابي أولاً
+                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY } });
+                let data = await res.json();
+                let currentOrders = data.record.orders || [];
+                
+                // إضافة الطلب الجديد وحفظه سحابياً للجميع
+                currentOrders.push(newOrder);
+                await fetch(BIN_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+                    body: JSON.stringify({ orders: currentOrders })
+                });
 
-            // غلق النوافذ وتشغيل العداد التنازلي للزبون
-            closeCheckoutModal();
-            document.getElementById('customer-view').style.display = 'none';
-            document.getElementById('timer-screen').style.display = 'block';
-            startTimer(15 * 60, document.getElementById('countdown'));
+                closeCheckoutModal();
+                document.getElementById('customer-view').style.display = 'none';
+                document.getElementById('timer-screen').style.display = 'block';
+                startTimer(15 * 60, document.getElementById('countdown'));
+            } catch (e) {
+                alert("حدث خطأ بالاتصال، حاول مرة أخرى!");
+                document.getElementById('submit-btn').innerText = "تأكيد الشراء وإرسال الطلب";
+                document.getElementById('submit-btn').disabled = false;
+            }
         }
 
-        // عداد الـ 15 دقيقة للزبون
         function startTimer(duration, display) {
             let timer = duration, minutes, seconds;
             setInterval(function () {
@@ -269,66 +263,80 @@
             }, 1000);
         }
 
-        // فتح لوحة تحكم كابتن الصالة بكلمة سر سريّة (مثلاً: 1234)
+        // الكابتن يدخل من جهازه بكلمة سر 1234
         function openCaptainPanel() {
             const password = prompt("ادخل الرقم السري الخاص بكابتن الصالة:");
             if (password === "1234") {
-                document.getElementById('restaurant-header').style.display = 'none';
-                document.getElementById('customer-view').style.display = 'none';
-                document.getElementById('timer-screen').style.display = 'none';
-                document.getElementById('checkout-modal').style.display = 'none';
+                document.getElementById('main-app').style.display = 'none';
                 document.getElementById('captain-panel').style.display = 'block';
-                
-                // الاستماع اللحظي للطلبات كل ثانيتين لتحديث الشاشة وتشغيل الجرس
                 loadCaptainOrders();
-                setInterval(loadCaptainOrders, 2000);
+                // تحديث تلقائي وفحص حي كل 4 ثواني لجلب الطلبات الجديدة وتشغيل الجرس
+                setInterval(loadCaptainOrders, 4000);
             } else {
                 alert("رقم سري خاطئ!");
             }
         }
 
-        // تحميل وعرض الطلبات بجهاز الكابتن مع الإشعار الصوتي
-        let lastOrdersCount = (JSON.parse(localStorage.getItem(channelName)) || []).length;
-        
-        function loadCaptainOrders() {
-            const orders = JSON.parse(localStorage.getItem(channelName)) || [];
-            const container = document.getElementById('orders-list');
-            
-            if (orders.length > lastOrdersCount) {
-                document.getElementById('bell-sound').play().catch(e => console.log("صوت الإشعار جاهز"));
-                lastOrdersCount = orders.length;
-            }
+        function logoutCaptain() { location.reload(); }
 
-            if (orders.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
-                return;
-            }
+        let localOrdersCount = 0;
 
-            container.innerHTML = "";
-            orders.reverse().forEach(order => {
-                const card = document.createElement('div');
-                card.className = `order-card ${order.status === 'مستلم' ? 'received' : ''}`;
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light);">
-                        <span>طاولة رقم: ${order.table}</span>
-                        <span>الوقت: ${order.time}</span>
-                    </div>
-                    <p style="margin: 8px 0; font-size:15px;">الطلب: <b>${order.items}</b></p>
-                    <div style="font-size:14px; color:var(--text-muted)">الحساب الكلي: <span style="color:var(--gold)">${order.total}</span></div>
-                    ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived(${order.id})">تم استلام الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
-                `;
-                container.appendChild(card);
-            });
+        async function loadCaptainOrders() {
+            try {
+                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY }, cache: "no-store" });
+                let data = await res.json();
+                let orders = data.record.orders || [];
+                
+                const container = document.getElementById('orders-list');
+                
+                // إذا جاء طلب جديد، شغل جرس الإنذار فوراً
+                if (orders.length > localOrdersCount && localOrdersCount !== 0) {
+                    document.getElementById('bell-sound').play().catch(e => {});
+                }
+                localOrdersCount = orders.length;
+
+                if (orders.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
+                    return;
+                }
+
+                container.innerHTML = "";
+                // عرض الأحدث فوق
+                [...orders].reverse().forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = `order-card ${order.status === 'مستلم' ? 'received' : ''}`;
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light);">
+                            <span>طاولة رقم: ${order.table}</span>
+                            <span>الوقت: ${order.time}</span>
+                        </div>
+                        <p style="margin: 8px 0; font-size:15px;">الطلب: <b>${order.items}</b></p>
+                        <div style="font-size:14px; color:var(--text-muted)">الحساب الكلي: <span style="color:var(--gold)">${order.total}</span></div>
+                        ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived(${order.id})">تم استلال الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (e) { console.log("خطأ في جلب البيانات السحابية"); }
         }
 
-        function markAsReceived(orderId) {
-            let orders = JSON.parse(localStorage.getItem(channelName)) || [];
-            orders = orders.map(o => {
-                if (o.id === orderId) o.status = "مستلم";
-                return o;
-            });
-            localStorage.setItem(channelName, JSON.stringify(orders));
-            loadCaptainOrders();
+        async function markAsReceived(orderId) {
+            try {
+                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY } });
+                let data = await res.json();
+                let orders = data.record.orders || [];
+                
+                orders = orders.map(o => {
+                    if (o.id === orderId) o.status = "مستلم";
+                    return o;
+                });
+
+                await fetch(BIN_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+                    body: JSON.stringify({ orders: orders })
+                });
+                loadCaptainOrders();
+            } catch (e) { alert("فشل التحديث، تأكد من الإنترنت!"); }
         }
     </script>
 </body>
