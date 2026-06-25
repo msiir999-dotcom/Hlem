@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منيو الفخامة الرقمي المميز</title>
+    <title>منيو مطعم حليم بسمايا</title>
     <style>
         :root {
             --bg-dark: #070707;
@@ -14,214 +14,329 @@
             --text-muted: #b3b3b3;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Times New Roman', 'Segoe UI', serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
-
-        /* الشاشة الترحيبية */
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #161616 0%, #050505 100%);
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 20px; transition: opacity 0.8s ease, visibility 0.8s;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .welcome-logo { width: 120px; height: 120px; border: 2px solid var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 3rem; color: var(--gold); margin-bottom: 20px; box-shadow: 0 0 20px rgba(197, 160, 89, 0.2); }
-        .welcome-title { font-size: 2.8rem; color: var(--gold); margin-bottom: 10px; font-weight: normal; letter-spacing: 2px; }
-        .welcome-subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 35px; font-style: italic; }
-        .enter-btn { background-color: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 15px 40px; font-size: 1.1rem; cursor: pointer; transition: all 0.4s ease; letter-spacing: 2px; }
-        .enter-btn:hover { background-color: var(--gold); color: var(--bg-dark); font-weight: bold; box-shadow: 0 0 15px rgba(197, 160, 89, 0.4); }
 
-        /* المحتوى الرئيسي */
-        .main-content { padding: 20px 15px; max-width: 800px; margin: 0 auto; display: none; opacity: 0; transition: opacity 0.6s ease; }
-        .main-content.show { display: block; opacity: 1; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-bottom: 60px;
+        }
 
-        header { text-align: center; margin-bottom: 35px; padding: 25px; border: 1px solid #222; background: #101010; position: relative; }
-        header h1 { font-size: 2.2rem; color: var(--gold); font-weight: normal; margin-bottom: 5px; }
-        header p { color: var(--text-muted); font-size: 0.95rem; font-style: italic; }
+        /* هيدر المطعم */
+        .restaurant-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(7,7,7,1)), url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000') center/cover;
+            border-bottom: 2px solid var(--gold);
+        }
 
-        /* أوقات العمل */
-        .info-bar { display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; color: var(--gold); margin-top: 10px; border-top: 1px dashed #333; padding-top: 10px; }
+        .restaurant-logo {
+            width: 90px;
+            height: 90px;
+            background-color: var(--card-bg);
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--gold);
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+        }
 
-        /* الفئات والتصنيفات */
-        .category-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .category-nav::-webkit-scrollbar { display: none; }
-        .category-btn { background-color: #121212; color: var(--text-light); padding: 12px 20px; font-size: 0.95rem; border: 1px solid #222; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
-        .category-btn.active { background-color: var(--gold); color: var(--bg-dark); border-color: var(--gold); font-weight: bold; }
+        .restaurant-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
 
-        /* كارتات الوجبات مع الصور */
-        .menu-items { display: grid; gap: 25px; grid-template-columns: 1fr; }
-        .item-card { background-color: var(--card-bg); border: 1px solid #1a1a1a; display: none; overflow: hidden; transition: all 0.3s ease; }
-        .item-card.show { display: block; }
-        .item-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-        
-        /* تظليل الصورة */
-        .item-img-container { width: 100%; height: 200px; background-color: #1a1a1a; position: relative; overflow: hidden; }
-        .item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .item-card:hover .item-img { transform: scale(1.05); }
-        .item-badge { position: absolute; top: 12px; right: 12px; background-color: rgba(7, 7, 7, 0.85); color: var(--gold); padding: 4px 10px; font-size: 0.8rem; border: 1px solid var(--gold); font-style: italic; }
+        .restaurant-info {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-        .item-details { padding: 20px; }
-        .item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-        .item-title { font-size: 1.3rem; font-weight: normal; color: var(--gold); }
-        .item-price { color: var(--text-light); font-size: 1.2rem; font-weight: bold; }
-        .item-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; height: 45px; overflow: hidden; text-overflow: ellipsis; }
-        
-        /* خيارات التخصيص الإضافية */
-        .item-options { display: flex; gap: 15px; margin-bottom: 15px; font-size: 0.85rem; color: var(--gold-light); border-top: 1px solid #1a1a1a; padding-top: 10px; }
-        .option-tag { display: flex; align-items: center; gap: 5px; }
+        /* أزرار الأقسام السريعة */
+        .categories-nav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            background-color: rgba(7, 7, 7, 0.95);
+            z-index: 100;
+            border-bottom: 1px solid #222;
+            backdrop-filter: blur(5px);
+        }
 
-        .order-btn { background-color: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; cursor: pointer; font-size: 0.9rem; width: 100%; transition: all 0.3s ease; }
-        .order-btn:hover { background-color: var(--gold); color: var(--bg-dark); font-weight: bold; }
+        .categories-nav::-webkit-scrollbar {
+            display: none;
+        }
 
-        /* أزرار التواصل أسفل الصفحة */
-        footer { margin-top: 50px; text-align: center; padding: 20px 0; border-top: 1px solid #1a1a1a; }
-        .footer-text { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; }
-        .contact-buttons { display: flex; justify-content: center; gap: 15px; }
-        .contact-link { color: var(--text-light); text-decoration: none; border: 1px solid #333; padding: 10px 20px; font-size: 0.9rem; transition: all 0.3s; background: #101010; }
-        .contact-link:hover { border-color: var(--gold); color: var(--gold); }
+        .category-btn {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            border: 1px solid #333;
+            padding: 8px 18px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background-color: var(--gold);
+            color: var(--bg-dark);
+            border-color: var(--gold);
+            font-weight: bold;
+        }
+
+        /* الحاوية الرئيسية للمنيو */
+        .menu-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu-section {
+            margin-bottom: 35px;
+            scroll-margin-top: 70px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: var(--gold-light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-right: 3px solid var(--gold);
+            padding-right: 10px;
+        }
+
+        /* كارت الوجبة */
+        .menu-item {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            border: 1px solid #1a1a1a;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-cover: cover;
+            background-color: #222;
+        }
+
+        .item-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .item-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+
+        .item-price {
+            font-size: 15px;
+            color: var(--gold);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* أزرار التواصل أسفل الشاشة */
+        .footer-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(18, 18, 18, 0.95);
+            border-top: 1px solid #222;
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-call {
+            background-color: #28a745;
+        }
     </style>
 </head>
 <body>
 
-    <!-- الشاشة الترحيبية الملكية -->
-    <div id="welcome-screen">
-        <div class="welcome-logo">👑</div>
-        <h1 class="welcome-title">قصر لافيستا الملكي</h1>
-        <p class="welcome-subtitle">أهلاً بكم في عالم الضيافة والمذاق الفاخر</p>
-        <button class="enter-btn" onclick="enterMenu()">استعراض المنيو</button>
+    <!-- هيدر المطعم -->
+    <div class="restaurant-header">
+        <div class="restaurant-logo">ح</div>
+        <div class="restaurant-name">حليم بسمايا</div>
+        <div class="restaurant-info">📍 بغداد - بسمايا</div>
+        <div class="restaurant-info">🕒 ساعات العمل: 12 ظهراً - 12 ليلاً</div>
     </div>
 
-    <!-- المحتوى الرئيسي للمنيو -->
-    <div class="main-content" id="main-content">
-        <header>
-            <h1>مطعم لافيستـا الملكي</h1>
-            <p>حيث تلتقي عراقة الطهي مع فخامة التقديم</p>
-            <div class="info-bar">
-                <span>🕒 12:00 ظهراً - 01:00 ليلاً</span>
-                <span>📍 بغداد - الجادرية</span>
-            </div>
-        </header>
+    <!-- أزرار الأقسام السريعة التصفح -->
+    <div class="categories-nav">
+        <a href="#hareesa" class="category-btn active">هريسة</a>
+        <a href="#appetizers" class="category-btn">مقبلات</a>
+        <a href="#drinks" class="category-btn">مشروبات غازية</a>
+    </div>
 
-        <div class="category-nav">
-            <span class="category-btn active" onclick="filterCategory('signature')">الأطباق الخاصة ✨</span>
-            <span class="category-btn" onclick="filterCategory('grills')">المشويات الفاخرة</span>
-            <span class="category-btn" onclick="filterCategory('drinks')">المشروبات والكوكتيل</span>
-        </div>
+    <!-- حاوية الوجبات -->
+    <div class="menu-container">
 
-        <div class="menu-items">
+        <!-- قسم الهريسة -->
+        <div id="hareesa" class="menu-section">
+            <h2 class="section-title">🥣 قسم الهريسة</h2>
             
-            <!-- وجبة 1 (أطباق خاصة) -->
-            <div class="item-card signature show">
-                <div class="item-img-container">
-                    <!-- تستطيع استبدال رابط الصورة برابط صورة حقيقية مستقبلاً -->
-                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" class="item-img" alt="ستيك ملكي">
-                    <span class="item-badge">الأكثر طلباً 🔥</span>
-                </div>
+            <div class="menu-item">
                 <div class="item-details">
-                    <div class="item-header">
-                        <div class="item-title">ستيك توماهوك الذهبي</div>
-                        <div class="item-price">65,000 د.ع</div>
+                    <div class="item-title-row">
+                        <span class="item-title">صحن هريسة بالدهن الحر</span>
+                        <span class="item-price">3,000 د.ع</span>
                     </div>
-                    <p class="item-desc">قطعة فاخرة من لحم البقر الأنجوس الفاخر المشوي على حطب البلوط، تقدم مع زبدة الترافل الثمينة.</p>
-                    <div class="item-options">
-                        <span class="option-tag">⚖️ 800 غرام</span>
-                        <span class="option-tag">🌶️ حار حسب الطلب</span>
-                    </div>
-                    <button class="order-btn">إضافة إلى الطلب</button>
+                    <p class="item-desc">هريسة عراقية أصلية باللحم والدهن الحر والدارسين</p>
                 </div>
             </div>
 
-            <!-- وجبة 2 (أطباق خاصة) -->
-            <div class="item-card signature show">
-                <div class="item-img-container">
-                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop" class="item-img" alt="سلمون ملكي">
-                </div>
+            <div class="menu-item">
                 <div class="item-details">
-                    <div class="item-header">
-                        <div class="item-title">ريزوتو السلمون البري</div>
-                        <div class="item-price">42,000 د.ع</div>
+                    <div class="item-title-row">
+                        <span class="item-title">سطل هريسة عائلي</span>
+                        <span class="item-price">8,000 د.ع</span>
                     </div>
-                    <p class="item-desc">أرز الريزوتو الإيطالي الكريمي المطبوخ مع زعفران النخبة، يعلوه فيليه السلمون المشوي المقرمش.</p>
-                    <div class="item-options">
-                        <span class="option-tag">⏱️ 20 دقيقة للتحضير</span>
-                    </div>
-                    <button class="order-btn">إضافة إلى الطلب</button>
+                    <p class="item-desc">تكفي لـ 3 إلى 4 أشخاص مجهزة ومغطاة بالدهن الحر</p>
                 </div>
             </div>
-
-            <!-- وجبة 3 (مشويات) -->
-            <div class="item-card grills">
-                <div class="item-img-container">
-                    <img src="https://images.unsplash.com/photo-1603360946369-dc9bb6258143?q=80&w=600&auto=format&fit=crop" class="item-img" alt="مشويات">
-                    <span class="item-badge">خلطة سرية 💎</span>
-                </div>
-                <div class="item-details">
-                    <div class="item-header">
-                        <div class="item-title">كباب لافيستا الخاص</div>
-                        <div class="item-price">28,000 د.ع</div>
-                    </div>
-                    <p class="item-desc">ثلاثة أشياش من لحم الغنم العراقي البلدي المفروم مع أعشابنا الخاصة، يقدم مع الخبز الحار والمقبلات.</p>
-                    <div class="item-options">
-                        <span class="option-tag">🍢 يُقدم مع مقبلات مشكلة</span>
-                    </div>
-                    <button class="order-btn">إضافة إلى الطلب</button>
-                </div>
-            </div>
-
-            <!-- وجبة 4 (مشروبات) -->
-            <div class="item-card drinks">
-                <div class="item-img-container">
-                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=600&auto=format&fit=crop" class="item-img" alt="مشروب">
-                </div>
-                <div class="item-details">
-                    <div class="item-header">
-                        <div class="item-title">كوكتيل الإمبراطور المنعش</div>
-                        <div class="item-price">8,500 د.ع</div>
-                    </div>
-                    <p class="item-desc">مزيج ساحر من الفواكه الاستوائية الطازجة مع لمسة من النعناع وشراب الورد المكثف.</p>
-                    <div class="item-options">
-                        <span class="option-tag">🍹 طبيعي 100%</span>
-                    </div>
-                    <button class="order-btn">إضافة إلى الطلب</button>
-                </div>
-            </div>
-
         </div>
 
-        <footer>
-            <p class="footer-text">يسعدنا دائماً خدمتكم والاستماع لآرائكم</p>
-            <div class="contact-buttons">
-                <a href="tel:07700000000" class="contact-link">📞 اتصل بنا</a>
-                <a href="https://wa.me/9647700000000" class="contact-link">💬 واتساب المطعم</a>
+        <!-- قسم المقبلات -->
+        <div id="appetizers" class="menu-section">
+            <h2 class="section-title">🥗 قسم المقبلات</h2>
+            
+            <div class="menu-item">
+                <div class="item-details">
+                    <div class="item-title-row">
+                        <span class="item-title">ماعون مقبلات مشكل</span>
+                        <span class="item-price">2,500 د.ع</span>
+                    </div>
+                    <p class="item-desc">تشكيلة فخمة من الحمص بطحينة، المتبل، والتبولة والزيتون</p>
+                </div>
             </div>
-        </footer>
+
+            <div class="menu-item">
+                <div class="item-details">
+                    <div class="item-title-row">
+                        <span class="item-title">حمص بطحينة</span>
+                        <span class="item-price">1,500 د.ع</span>
+                    </div>
+                    <p class="item-desc">مجهزة بزيت الزيتون والليمون الفريش</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم المشروبات الغازية -->
+        <div id="drinks" class="menu-section">
+            <h2 class="section-title">🥤 مشروبات غازية</h2>
+            
+            <div class="menu-item">
+                <div class="item-details">
+                    <div class="item-title-row">
+                        <span class="item-title">بيبسي / سفن أب كين</span>
+                        <span class="item-price">500 د.ع</span>
+                    </div>
+                    <p class="item-desc">مشروب غازي بارد منعش</p>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-details">
+                    <div class="item-title-row">
+                        <span class="item-title">شنينة باردة</span>
+                        <span class="item-price">1,000 د.ع</span>
+                    </div>
+                    <p class="item-desc">لبن شنينة عراقي مبرد بالنعناع</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- أزرار التواصل بالأسفل للزبائن -->
+    <div class="footer-actions">
+        <a href="tel:00000000" class="action-btn btn-call">
+            📞 اتصل للطلب (00000000)
+        </a>
     </div>
 
     <script>
-        // دالة الدخول من الصفحة الترحيبية
-        function enterMenu() {
-            const welcome = document.getElementById('welcome-screen');
-            const main = document.getElementById('main-content');
-            
-            welcome.style.opacity = '0';
-            welcome.style.visibility = 'hidden';
-            
-            main.classList.add('show');
-        }
-
-        // دالة الفلترة بين الأقسام
-        function filterCategory(category) {
-            const buttons = document.querySelectorAll('.category-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const cards = document.querySelectorAll('.item-card');
-            cards.forEach(card => {
-                if (card.classList.contains(category)) {
-                    card.classList.add('show');
-                } else {
-                    card.classList.remove('show');
-                }
+        // كود بسيط لتغيير حالة الزر النشط عند الضغط
+        const buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
             });
-        }
+        });
     </script>
 
 </body>
