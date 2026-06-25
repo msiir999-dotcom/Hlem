@@ -58,8 +58,6 @@
         
         .captain-login-trigger { font-size: 12px; color: #333; text-align: left; padding: 8px; cursor: pointer; background: #111; display: inline-block; border-radius: 5px; margin-top: 10px; }
     </style>
-    <!-- مكتبة الاتصال بالسيرفر السحابي مجاناً لتناقل الطلبات فوراً بين الأجهزة -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -80,7 +78,7 @@
             <div class="menu-container">
                 <div id="hareesa" class="menu-section">
                     <h2 class="section-title">قسم الهريسة</h2>
-                    <div class="menu-item" data-id="1" data-name="صحن هريسة بالدهن الحر" data-price="3000">
+                    <div class="menu-item" data-id="1">
                         <div>
                             <div class="item-title">صحن هريسة بالدهن الحر</div>
                             <div class="item-desc">باللحم والدهن الحر والدارسين الأصلي</div>
@@ -96,7 +94,7 @@
 
                 <div id="appetizers" class="menu-section">
                     <h2 class="section-title">قسم المقبلات</h2>
-                    <div class="menu-item" data-id="2" data-name="ماعون مقبلات مشكل" data-price="2500">
+                    <div class="menu-item" data-id="2">
                         <div>
                             <div class="item-title">ماعون مقبلات مشكل</div>
                             <div class="item-desc">حمص بطحينة، متبل، تبولة</div>
@@ -112,7 +110,7 @@
 
                 <div id="drinks" class="menu-section">
                     <h2 class="section-title">مشروبات غازية</h2>
-                    <div class="menu-item" data-id="3" data-name="بيبسي بارد" data-price="500">
+                    <div class="menu-item" data-id="3">
                         <div>
                             <div class="item-title">بيبسي بارد</div>
                             <div class="item-desc">علبة مبردة</div>
@@ -150,7 +148,7 @@
             <button onclick="logoutCaptain()" style="padding: 5px 10px; background: #dc3545; color: #fff; border:none; border-radius: 5px; cursor:pointer;">خروج</button>
         </div>
         <div id="orders-list">
-            <p style="color: var(--text-muted); text-align: center;">جاري الاتصال بالسيرفر السحابي وتحميل الطلبات...</p>
+            <p style="color: var(--text-muted); text-align: center;">جاري تحميل الطلبات الحية...</p>
         </div>
     </div>
 
@@ -167,9 +165,8 @@
     <audio id="bell-sound" src="https://assets.mixkit.co/active_storage/sfx/911/911-200.wav" preload="auto"></audio>
 
     <script>
-        // ربط مجاني وسريع جداً عبر مستودع بيانات سحابي عام ومفتوح لنقل الطلبات فورياً بين أي جهازين بالبث الحي
-        const BIN_URL = "https://api.jsonbin.io/v3/b/667b57ece41b4d34e408ec20";
-        const API_KEY = "$2a$10$R8b7V6Vf2Rj.26xK46m7vO2C.3DByS6E9AOnB9b8qZ.U9pZp2x7fG"; // مفتاح تفعيل مجاني وآمن ومفتوح
+        // السيرفر السحابي المفتوح والآمن
+        const DB_URL = "https://halim-bismaya-default-rtdb.firebaseio.com/orders.json";
 
         let cart = {};
         const menuItems = {
@@ -202,7 +199,6 @@
 
         function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
 
-        // السستم يرسل الطلب فورياً للسيرفر السحابي العام لكي يظهر عند جهاز الكابتن بنفس الثانية
         async function submitOrderToServer() {
             const tableNum = document.getElementById('table-number').value;
             if (!tableNum) { alert("يجب كتابة رقم الطاولة!"); return; }
@@ -217,8 +213,9 @@
                 total += cart[id] * menuItems[id].price;
             }
 
+            const orderId = "id_" + Date.now();
             const newOrder = {
-                id: Date.now(),
+                id: orderId,
                 table: tableNum,
                 items: itemsDetails.join(' + '),
                 total: total.toLocaleString() + " د.ع",
@@ -227,17 +224,11 @@
             };
 
             try {
-                // جلب الطلبات السابقة من السيرفر السحابي أولاً
-                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY } });
-                let data = await res.json();
-                let currentOrders = data.record.orders || [];
-                
-                // إضافة الطلب الجديد وحفظه سحابياً للجميع
-                currentOrders.push(newOrder);
-                await fetch(BIN_URL, {
+                // إرسال مباشر ومستقر بدون قيود
+                await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}.json`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-                    body: JSON.stringify({ orders: currentOrders })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newOrder)
                 });
 
                 closeCheckoutModal();
@@ -245,7 +236,7 @@
                 document.getElementById('timer-screen').style.display = 'block';
                 startTimer(15 * 60, document.getElementById('countdown'));
             } catch (e) {
-                alert("حدث خطأ بالاتصال، حاول مرة أخرى!");
+                alert("حدث خطأ بالاتصال، حاول مجدداً!");
                 document.getElementById('submit-btn').innerText = "تأكيد الشراء وإرسال الطلب";
                 document.getElementById('submit-btn').disabled = false;
             }
@@ -263,15 +254,13 @@
             }, 1000);
         }
 
-        // الكابتن يدخل من جهازه بكلمة سر 1234
         function openCaptainPanel() {
             const password = prompt("ادخل الرقم السري الخاص بكابتن الصالة:");
             if (password === "1234") {
                 document.getElementById('main-app').style.display = 'none';
                 document.getElementById('captain-panel').style.display = 'block';
                 loadCaptainOrders();
-                // تحديث تلقائي وفحص حي كل 4 ثواني لجلب الطلبات الجديدة وتشغيل الجرس
-                setInterval(loadCaptainOrders, 4000);
+                setInterval(loadCaptainOrders, 3000);
             } else {
                 alert("رقم سري خاطئ!");
             }
@@ -283,26 +272,24 @@
 
         async function loadCaptainOrders() {
             try {
-                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY }, cache: "no-store" });
+                let res = await fetch(DB_URL);
                 let data = await res.json();
-                let orders = data.record.orders || [];
                 
                 const container = document.getElementById('orders-list');
+                if (!data) {
+                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
+                    return;
+                }
+
+                let orders = Object.values(data);
                 
-                // إذا جاء طلب جديد، شغل جرس الإنذار فوراً
                 if (orders.length > localOrdersCount && localOrdersCount !== 0) {
                     document.getElementById('bell-sound').play().catch(e => {});
                 }
                 localOrdersCount = orders.length;
 
-                if (orders.length === 0) {
-                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
-                    return;
-                }
-
                 container.innerHTML = "";
-                // عرض الأحدث فوق
-                [...orders].reverse().forEach(order => {
+                orders.reverse().forEach(order => {
                     const card = document.createElement('div');
                     card.className = `order-card ${order.status === 'مستلم' ? 'received' : ''}`;
                     card.innerHTML = `
@@ -312,33 +299,23 @@
                         </div>
                         <p style="margin: 8px 0; font-size:15px;">الطلب: <b>${order.items}</b></p>
                         <div style="font-size:14px; color:var(--text-muted)">الحساب الكلي: <span style="color:var(--gold)">${order.total}</span></div>
-                        ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived(${order.id})">تم استلال الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
+                        ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived('${order.id}')">تم استلام الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
                     `;
                     container.appendChild(card);
                 });
-            } catch (e) { console.log("خطأ في جلب البيانات السحابية"); }
+            } catch (e) { console.log("خطأ بالاتصال بالسيرفر"); }
         }
 
         async function markAsReceived(orderId) {
             try {
-                let res = await fetch(BIN_URL + "/latest", { headers: { "X-Master-Key": API_KEY } });
-                let data = await res.json();
-                let orders = data.record.orders || [];
-                
-                orders = orders.map(o => {
-                    if (o.id === orderId) o.status = "مستلم";
-                    return o;
-                });
-
-                await fetch(BIN_URL, {
+                await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}/status.json`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-                    body: JSON.stringify({ orders: orders })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify("مستلم")
                 });
                 loadCaptainOrders();
-            } catch (e) { alert("فشل التحديث، تأكد من الإنترنت!"); }
+            } catch (e) { alert("فشل تحديث الحالة، تأكد من الإنترنت!"); }
         }
     </script>
 </body>
-    </html>
-    
+</html>
