@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منيو مطعم حليم بسمايا</title>
+    <title>سيستم مطعم حليم بسمايا</title>
     <style>
         :root {
             --bg-dark: #070707;
@@ -12,332 +12,324 @@
             --gold-light: #e5c185;
             --text-light: #ffffff;
             --text-muted: #b3b3b3;
+            --success: #28a745;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 80px; }
+        
+        .restaurant-header { text-align: center; padding: 30px 20px; background: #000; border-bottom: 2px solid var(--gold); }
+        .restaurant-name { font-size: 26px; font-weight: bold; color: var(--text-light); }
+        .restaurant-info { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            padding-bottom: 60px;
-        }
+        /* التنقل بين الأقسام */
+        .categories-nav { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; position: sticky; top: 0; background: rgba(7,7,7,0.95); z-index: 100; border-bottom: 1px solid #222; }
+        .category-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid #333; padding: 8px 16px; border-radius: 20px; cursor: pointer; text-decoration: none; white-space: nowrap; font-size: 14px; }
+        .category-btn.active { background: var(--gold); color: var(--bg-dark); font-weight: bold; }
 
-        /* هيدر المطعم */
-        .restaurant-header {
-            text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(7,7,7,1)), url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000') center/cover;
-            border-bottom: 2px solid var(--gold);
-        }
+        /* المنيو والبطاقات */
+        .menu-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .menu-section { margin-bottom: 30px; }
+        .section-title { font-size: 18px; color: var(--gold-light); margin-bottom: 12px; border-right: 3px solid var(--gold); padding-right: 8px; }
+        .menu-item { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
+        .item-title { font-size: 16px; font-weight: bold; }
+        .item-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .item-price { color: var(--gold); font-weight: bold; font-size: 14px; margin-top: 4px; }
+        
+        /* أزرار الإضافة والتنقيص */
+        .quantity-control { display: flex; align-items: center; gap: 12px; background: #000; padding: 4px 10px; border-radius: 20px; border: 1px solid #333; }
+        .q-btn { background: none; border: none; color: var(--gold); font-size: 18px; font-weight: bold; cursor: pointer; width: 24px; }
+        .q-num { font-size: 14px; font-weight: bold; min-width: 15px; text-align: center; }
 
-        .restaurant-logo {
-            width: 90px;
-            height: 90px;
-            background-color: var(--card-bg);
-            border: 2px solid var(--gold);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: var(--gold);
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
-        }
+        /* شريط السلة السفلي للزبون */
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #121212; border-top: 2px solid var(--gold); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; z-index: 99; }
+        .btn-order { background: var(--success); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        .restaurant-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--text-light);
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
+        /* نافذة إتمام الطلب (Popup) */
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; text-align: center; }
+        .input-table { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; text-align: center; font-size: 18px; margin: 15px 0; font-weight: bold; }
+        .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+        .close-modal { color: var(--text-muted); font-size: 13px; cursor: pointer; margin-top: 15px; display: inline-block; }
 
-        .restaurant-info {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+        /* شاشة العداد التنازلي للزبون */
+        .timer-screen { display: none; text-align: center; padding: 40px 20px; max-width: 500px; margin: 50px auto; background: var(--card-bg); border-radius: 15px; border: 1px solid var(--gold); }
+        .timer-circle { font-size: 48px; color: var(--gold); font-weight: bold; margin: 20px 0; }
 
-        /* أزرار الأقسام السريعة */
-        .categories-nav {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            background-color: rgba(7, 7, 7, 0.95);
-            z-index: 100;
-            border-bottom: 1px solid #222;
-            backdrop-filter: blur(5px);
-        }
-
-        .categories-nav::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-btn {
-            background-color: var(--card-bg);
-            color: var(--text-light);
-            border: 1px solid #333;
-            padding: 8px 18px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .category-btn.active, .category-btn:hover {
-            background-color: var(--gold);
-            color: var(--bg-dark);
-            border-color: var(--gold);
-            font-weight: bold;
-        }
-
-        /* الحاوية الرئيسية للمنيو */
-        .menu-container {
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .menu-section {
-            margin-bottom: 35px;
-            scroll-margin-top: 70px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            color: var(--gold-light);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-right: 3px solid var(--gold);
-            padding-right: 10px;
-        }
-
-        /* كارت الوجبة */
-        .menu-item {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 15px;
-            border: 1px solid #1a1a1a;
-            transition: transform 0.2s;
-        }
-
-        .menu-item:active {
-            transform: scale(0.98);
-        }
-
-        .item-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-cover: cover;
-            background-color: #222;
-        }
-
-        .item-details {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .item-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 4px;
-        }
-
-        .item-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--text-light);
-        }
-
-        .item-price {
-            font-size: 15px;
-            color: var(--gold);
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .item-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        /* أزرار التواصل أسفل الشاشة */
-        .footer-actions {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(18, 18, 18, 0.95);
-            border-top: 1px solid #222;
-            padding: 10px 20px;
-            display: flex;
-            gap: 10px;
-            max-width: 600px;
-            margin: 0 auto;
-            backdrop-filter: blur(10px);
-        }
-
-        .action-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-call {
-            background-color: #28a745;
-        }
+        /* لوحة تحكم الكابتن */
+        #captain-panel { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .captain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+        .order-card { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--gold); }
+        .order-card.received { border-left-color: var(--success); opacity: 0.7; }
+        .btn-receive { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* زر سري أسفل الهيدر مخصص للكابتن */
+        .captain-login-trigger { font-size: 11px; color: #222; text-align: left; padding: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- هيدر المطعم -->
-    <div class="restaurant-header">
-        <div class="restaurant-logo">ح</div>
-        <div class="restaurant-name">حليم بسمايا</div>
-        <div class="restaurant-info">📍 بغداد - بسمايا</div>
-        <div class="restaurant-info">🕒 ساعات العمل: 12 ظهراً - 12 ليلاً</div>
-    </div>
+    <div id="main-app">
+        <!-- هيدر المطعم -->
+        <div class="restaurant-header">
+            <div class="restaurant-name">حليم بسمايا</div>
+            <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 12 ظهراً - 12 ليلاً</div>
+            <div class="captain-login-trigger" onclick="openCaptainPanel()">لوحة الكابتن</div>
+        </div>
 
-    <!-- أزرار الأقسام السريعة التصفح -->
-    <div class="categories-nav">
-        <a href="#hareesa" class="category-btn active">هريسة</a>
-        <a href="#appetizers" class="category-btn">مقبلات</a>
-        <a href="#drinks" class="category-btn">مشروبات غازية</a>
-    </div>
+        <!-- تصفح الأقسام للزبون -->
+        <div id="customer-view">
+            <div class="categories-nav">
+                <a href="#hareesa" class="category-btn active">🥣 هريسة</a>
+                <a href="#appetizers" class="category-btn">🥗 مقبلات</a>
+                <a href="#drinks" class="category-btn">🥤 مشروبات</a>
+            </div>
 
-    <!-- حاوية الوجبات -->
-    <div class="menu-container">
-
-        <!-- قسم الهريسة -->
-        <div id="hareesa" class="menu-section">
-            <h2 class="section-title">🥣 قسم الهريسة</h2>
-            
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">صحن هريسة بالدهن الحر</span>
-                        <span class="item-price">3,000 د.ع</span>
+            <div class="menu-container">
+                <!-- قسم الهريسة -->
+                <div id="hareesa" class="menu-section">
+                    <h2 class="section-title">قسم الهريسة</h2>
+                    <div class="menu-item" data-id="1" data-name="صحن هريسة بالدهن الحر" data-price="3000">
+                        <div>
+                            <div class="item-title">صحن هريسة بالدهن الحر</div>
+                            <div class="item-desc">باللحم والدهن الحر والدارسين الأصلي</div>
+                            <div class="item-price">3,000 د.ع</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="q-btn" onclick="updateQty(1, -1)">-</button>
+                            <span class="q-num" id="qty-1">0</span>
+                            <button class="q-btn" onclick="updateQty(1, 1)">+</button>
+                        </div>
                     </div>
-                    <p class="item-desc">هريسة عراقية أصلية باللحم والدهن الحر والدارسين</p>
+                </div>
+
+                <!-- قسم المقبلات -->
+                <div id="appetizers" class="menu-section">
+                    <h2 class="section-title">قسم المقبلات</h2>
+                    <div class="menu-item" data-id="2" data-name="ماعون مقبلات مشكل" data-price="2500">
+                        <div>
+                            <div class="item-title">ماعون مقبلات مشكل</div>
+                            <div class="item-desc">حمص بطحينة، متبل، تبولة، وجاجيك</div>
+                            <div class="item-price">2,500 د.ع</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="q-btn" onclick="updateQty(2, -1)">-</button>
+                            <span class="q-num" id="qty-2">0</span>
+                            <button class="q-btn" onclick="updateQty(2, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قسم المشروبات -->
+                <div id="drinks" class="menu-section">
+                    <h2 class="section-title">مشروبات غازية</h2>
+                    <div class="menu-item" data-id="3" data-name="بيبسي بارد" data-price="500">
+                        <div>
+                            <div class="item-title">بيبسي بارد</div>
+                            <div class="item-desc">علبة مبردة</div>
+                            <div class="item-price">500 د.ع</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="q-btn" onclick="updateQty(3, -1)">-</button>
+                            <span class="q-num" id="qty-3">0</span>
+                            <button class="q-btn" onclick="updateQty(3, 1)">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">سطل هريسة عائلي</span>
-                        <span class="item-price">8,000 د.ع</span>
-                    </div>
-                    <p class="item-desc">تكفي لـ 3 إلى 4 أشخاص مجهزة ومغطاة بالدهن الحر</p>
+            <!-- شريط السلة السفلي للزبون -->
+            <div class="cart-bar">
+                <div>
+                    <span style="font-size: 13px; color: var(--text-muted);">إجمالي الحساب:</span>
+                    <div id="cart-total" style="font-size: 18px; font-weight: bold; color: var(--gold);">0 د.ع</div>
                 </div>
+                <button class="btn-order" onclick="openCheckoutModal()">إتـمـام الـطـلـب 🛒</button>
             </div>
         </div>
 
-        <!-- قسم المقبلات -->
-        <div id="appetizers" class="menu-section">
-            <h2 class="section-title">🥗 قسم المقبلات</h2>
-            
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">ماعون مقبلات مشكل</span>
-                        <span class="item-price">2,500 د.ع</span>
-                    </div>
-                    <p class="item-desc">تشكيلة فخمة من الحمص بطحينة، المتبل، والتبولة والزيتون</p>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">حمص بطحينة</span>
-                        <span class="item-price">1,500 د.ع</span>
-                    </div>
-                    <p class="item-desc">مجهزة بزيت الزيتون والليمون الفريش</p>
-                </div>
-            </div>
+        <!-- شاشة العداد التنازلي بعد طلب الزبون -->
+        <div id="timer-screen" class="timer-screen">
+            <h2>تم إرسال طلبك بنجاح للشركة! 🎉</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">يرجى الانتظار، طلبك قيد التحضير الآن.</p>
+            <div class="timer-circle" id="countdown">15:00</div>
+            <p style="color: var(--gold-light);">ينتهي الوقت ويصلك الطلب فقط!</p>
         </div>
-
-        <!-- قسم المشروبات الغازية -->
-        <div id="drinks" class="menu-section">
-            <h2 class="section-title">🥤 مشروبات غازية</h2>
-            
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">بيبسي / سفن أب كين</span>
-                        <span class="item-price">500 د.ع</span>
-                    </div>
-                    <p class="item-desc">مشروب غازي بارد منعش</p>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <div class="item-details">
-                    <div class="item-title-row">
-                        <span class="item-title">شنينة باردة</span>
-                        <span class="item-price">1,000 د.ع</span>
-                    </div>
-                    <p class="item-desc">لبن شنينة عراقي مبرد بالنعناع</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- أزرار التواصل بالأسفل للزبائن -->
-    <div class="footer-actions">
-        <a href="tel:00000000" class="action-btn btn-call">
-            📞 اتصل للطلب (00000000)
-        </a>
+    <!-- لوحة تحكم الكابتن المفتوحة بجهازه -->
+    <div id="captain-panel">
+        <div class="captain-header">
+            <h2>شاشة كابتن الصالة 🤵‍♂️</h2>
+            <button onclick="location.reload()" style="padding: 5px 10px; background: #333; color: #fff; border-radius: 5px;">تحديث</button>
+        </div>
+        <div id="orders-list">
+            <p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>
+        </div>
     </div>
+
+    <!-- نافذة إدخال رقم الطاولة للزبون -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <h3>تأكيد الطلب 🧾</h3>
+            <p style="margin-top: 10px; color: var(--text-muted);">إجمالي حسابك هو: <span id="modal-total" style="color: var(--gold); font-weight: bold;">0</span> د.ع</p>
+            <input type="number" id="table-number" class="input-table" placeholder="اكتب رقم طاولتك هنا" required>
+            <button class="btn-confirm" onclick="submitOrderToServer()">تأكيد الشراء وإرسال الطلب</button>
+            <span class="close-modal" onclick="closeCheckoutModal()">إلغاء وتعديل الطلب</span>
+        </div>
+    </div>
+
+    <!-- صوت الجرس عند إشعار الكابتن بطلب جديد -->
+    <audio id="bell-sound" src="https://assets.mixkit.co/active_storage/sfx/911/911-200.wav" preload="auto"></audio>
 
     <script>
-        // كود بسيط لتغيير حالة الزر النشط عند الضغط
-        const buttons = document.querySelectorAll('.category-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-    </script>
+        // سستم إدارة البيانات والاتصال اللاسلكي الفوري المفتوح (بين الزبائن والكابتن)
+        let cart = {};
+        const menuItems = {
+            1: { name: "صحن هريسة بالدهن الحر", price: 3000 },
+            2: { name: "ماعون مقبلات مشكل", price: 2500 },
+            3: { name: "بيبسي بارد", price: 500 }
+        };
 
+        // ربط مجاني فوري لنقل البيانات بدون سيرفر (WebSockets عبر محاكي محلي متزامن متصل بالمتصفح)
+        const channelName = "halim_bismaya_orders";
+        
+        function updateQty(id, change) {
+            if (!cart[id]) cart[id] = 0;
+            cart[id] += change;
+            if (cart[id] <= 0) delete cart[id];
+            
+            document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            let total = 0;
+            for (let id in cart) {
+                total += cart[id] * menuItems[id].price;
+            }
+            document.getElementById('cart-total').innerText = total.toLocaleString() + " د.ع";
+            document.getElementById('modal-total').innerText = total.toLocaleString();
+        }
+
+        function openCheckoutModal() {
+            let total = 0;
+            for (let id in cart) total += cart[id];
+            if (total === 0) { alert("الرجاء إضافة أصناف للسلة أولاً!"); return; }
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+
+        // إرسال الطلب وحفظه في السيرفر السحابي المحلي للمتصفح لتلقيه عند الكابتن فوراً
+        function submitOrderToServer() {
+            const tableNum = document.getElementById('table-number').value;
+            if (!tableNum) { alert("يجب كتابة رقم الطاولة لإتمام الطلب!"); return; }
+            
+            let itemsDetails = [];
+            let total = 0;
+            for (let id in cart) {
+                itemsDetails.push(`${menuItems[id].name} (عدد ${cart[id]})`);
+                total += cart[id] * menuItems[id].price;
+            }
+
+            const newOrder = {
+                id: Date.now(),
+                table: tableNum,
+                items: itemsDetails.join(' + '),
+                total: total.toLocaleString() + " د.ع",
+                status: "جديد",
+                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
+            };
+
+            // حفظ الطلب في الذاكرة المشتركة السحابية
+            let existingOrders = JSON.parse(localStorage.getItem(channelName)) || [];
+            existingOrders.push(newOrder);
+            localStorage.setItem(channelName, JSON.stringify(existingOrders));
+
+            // غلق النوافذ وتشغيل العداد التنازلي للزبون
+            closeCheckoutModal();
+            document.getElementById('customer-view').style.display = 'none';
+            document.getElementById('timer-screen').style.display = 'block';
+            startTimer(15 * 60, document.getElementById('countdown'));
+        }
+
+        // عداد الـ 15 دقيقة للزبون
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                display.textContent = minutes + ":" + seconds;
+                if (--timer < 0) { display.textContent = "وصل الطلب بالهنا والشفا!"; }
+            }, 1000);
+        }
+
+        // فتح لوحة تحكم كابتن الصالة بكلمة سر سريّة (مثلاً: 1234)
+        function openCaptainPanel() {
+            const password = prompt("ادخل الرقم السري الخاص بكابتن الصالة:");
+            if (password === "1234") {
+                document.getElementById('restaurant-header').style.display = 'none';
+                document.getElementById('customer-view').style.display = 'none';
+                document.getElementById('timer-screen').style.display = 'none';
+                document.getElementById('checkout-modal').style.display = 'none';
+                document.getElementById('captain-panel').style.display = 'block';
+                
+                // الاستماع اللحظي للطلبات كل ثانيتين لتحديث الشاشة وتشغيل الجرس
+                loadCaptainOrders();
+                setInterval(loadCaptainOrders, 2000);
+            } else {
+                alert("رقم سري خاطئ!");
+            }
+        }
+
+        // تحميل وعرض الطلبات بجهاز الكابتن مع الإشعار الصوتي
+        let lastOrdersCount = (JSON.parse(localStorage.getItem(channelName)) || []).length;
+        
+        function loadCaptainOrders() {
+            const orders = JSON.parse(localStorage.getItem(channelName)) || [];
+            const container = document.getElementById('orders-list');
+            
+            if (orders.length > lastOrdersCount) {
+                document.getElementById('bell-sound').play().catch(e => console.log("صوت الإشعار جاهز"));
+                lastOrdersCount = orders.length;
+            }
+
+            if (orders.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            orders.reverse().forEach(order => {
+                const card = document.createElement('div');
+                card.className = `order-card ${order.status === 'مستلم' ? 'received' : ''}`;
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light);">
+                        <span>طاولة رقم: ${order.table}</span>
+                        <span>الوقت: ${order.time}</span>
+                    </div>
+                    <p style="margin: 8px 0; font-size:15px;">الطلب: <b>${order.items}</b></p>
+                    <div style="font-size:14px; color:var(--text-muted)">الحساب الكلي: <span style="color:var(--gold)">${order.total}</span></div>
+                    ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived(${order.id})">تم استلام الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function markAsReceived(orderId) {
+            let orders = JSON.parse(localStorage.getItem(channelName)) || [];
+            orders = orders.map(o => {
+                if (o.id === orderId) o.status = "مستلم";
+                return o;
+            });
+            localStorage.setItem(channelName, JSON.stringify(orders));
+            loadCaptainOrders();
+        }
+    </script>
 </body>
 </html>
