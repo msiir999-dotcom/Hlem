@@ -16,18 +16,18 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 80px; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 80px; scroll-behavior: smooth; }
         
         .restaurant-header { text-align: center; padding: 30px 20px; background: #000; border-bottom: 2px solid var(--gold); }
         .restaurant-name { font-size: 26px; font-weight: bold; color: var(--text-light); }
         .restaurant-info { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
 
         .categories-nav { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; position: sticky; top: 0; background: rgba(7,7,7,0.95); z-index: 100; border-bottom: 1px solid #222; }
-        .category-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid #333; padding: 8px 16px; border-radius: 20px; cursor: pointer; text-decoration: none; white-space: nowrap; font-size: 14px; }
+        .category-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid #333; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; }
         .category-btn.active { background: var(--gold); color: var(--bg-dark); font-weight: bold; }
 
         .menu-container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .menu-section { margin-bottom: 30px; }
+        .menu-section { margin-bottom: 30px; padding-top: 20px; }
         .section-title { font-size: 18px; color: var(--gold-light); margin-bottom: 12px; border-right: 3px solid var(--gold); padding-right: 8px; }
         .menu-item { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
         .item-title { font-size: 16px; font-weight: bold; }
@@ -56,13 +56,15 @@
             <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 المنيو الرقمي المباشر</div>
         </div>
 
+        <!-- أزرار التنقل الذكية المحدثة -->
         <div class="categories-nav">
-            <a href="#hareesa" class="category-btn active">🥣 هريسة</a>
-            <a href="#appetizers" class="category-btn">🥗 مقبلات</a>
-            <a href="#drinks" class="category-btn">🥤 مشروبات</a>
+            <button class="category-btn active" onclick="scrollToSection('hareesa', this)">🥣 هريسة</button>
+            <button class="category-btn" onclick="scrollToSection('appetizers', this)">🥗 مقبلات</button>
+            <button class="category-btn" onclick="scrollToSection('drinks', this)">🥤 مشروبات</button>
         </div>
 
         <div class="menu-container">
+            <!-- قسم الهريسة -->
             <div id="hareesa" class="menu-section">
                 <h2 class="section-title">قسم الهريسة</h2>
                 <div class="menu-item" data-id="1">
@@ -79,6 +81,7 @@
                 </div>
             </div>
 
+            <!-- قسم المقبلات -->
             <div id="appetizers" class="menu-section">
                 <h2 class="section-title">قسم المقبلات</h2>
                 <div class="menu-item" data-id="2">
@@ -95,6 +98,7 @@
                 </div>
             </div>
 
+            <!-- قسم المشروبات -->
             <div id="drinks" class="menu-section">
                 <h2 class="section-title">مشروبات غازية</h2>
                 <div class="menu-item" data-id="3">
@@ -132,7 +136,6 @@
     </div>
 
     <script>
-        // تم تحديث رقم واتساب المطعم بنجاح هنا
         const WHATSAPP_NUMBER = "9647748841353"; 
 
         let cart = {};
@@ -141,6 +144,21 @@
             2: { name: "ماعون مقبلات مشكل", price: 2500 },
             3: { name: "بيبسي بارد", price: 500 }
         };
+
+        // دالة التنقل الذكي والسلس بين الأقسام
+        function scrollToSection(sectionId, element) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                // الانتقال إلى القسم مع مراعاة مساحة الـ Navbar بالأعلى
+                const yOffset = -70; 
+                const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+
+                // تغيير الزر النشط ليعطي انطباعاً تفاعلياً ممتازاً
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
 
         function updateQty(id, change) {
             if (!cart[id]) cart[id] = 0;
@@ -191,4 +209,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
