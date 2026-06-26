@@ -3,388 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منيو حليم بسمايا الفاخر مع لوحة التحكم</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
+    <title>منيو مطعم حليم بسمايا</title>
     <style>
         :root {
-            --bg-dark-core: #090a0f;
-            --bg-card-premium: #131520;
-            --neon-amber: #ffb703;      
-            --neon-coral: #fb8500;      
-            --text-pure: #ffffff;
-            --text-dimmed: #8e9aa8;
-            --soft-border: rgba(255, 183, 3, 0.15);
+            --bg-dark: #070707;
+            --card-bg: #121212;
+            --gold: #c5a059;
+            --gold-light: #e5c185;
+            --text-light: #ffffff;
+            --text-muted: #b3b3b3;
+            --success: #28a745;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--bg-dark-core); color: var(--text-pure); padding-bottom: 140px; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 90px; }
         
-        .premium-header { text-align: center; padding: 40px 20px; background: radial-gradient(circle at top, #1c1e2d 0%, var(--bg-dark-core) 70%); border-bottom: 1px solid var(--soft-border); position: relative; }
-        .premium-header::after { content: ''; position: absolute; bottom: -2px; left: 25%; right: 25%; height: 3px; background: linear-gradient(90deg, transparent, var(--neon-amber), transparent); }
-        .brand-title { font-size: 34px; font-weight: 900; color: var(--text-pure); letter-spacing: -0.5px; }
-        .brand-title span { color: var(--neon-amber); }
-        .brand-badge { display: inline-block; background: rgba(251, 133, 0, 0.15); color: var(--neon-coral); font-size: 12px; padding: 4px 14px; border-radius: 50px; font-weight: 700; margin-top: 8px; border: 1px solid rgba(251, 133, 0, 0.3); }
+        .restaurant-header { text-align: center; padding: 25px 20px; background: #000; border-bottom: 2px solid var(--gold); }
+        .restaurant-name { font-size: 26px; font-weight: bold; color: var(--text-light); }
+        .restaurant-info { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
 
-        .nav-scroll-container { position: sticky; top: 0; background: rgba(9, 10, 15, 0.92); backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; }
-        .categories-grid { display: flex; gap: 10px; overflow-x: auto; padding: 0 20px; scrollbar-width: none; }
-        .categories-grid::-webkit-scrollbar { display: none; }
-        .nav-tab-btn { background: #181a26; color: var(--text-dimmed); border: 1px solid #25293c; padding: 12px 24px; border-radius: 16px; cursor: pointer; white-space: nowrap; font-size: 14px; font-weight: 700; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-        .nav-tab-btn.active-tab { background: linear-gradient(135deg, var(--neon-amber), var(--neon-coral)); color: #000; border-color: transparent; box-shadow: 0 8px 20px rgba(255, 183, 3, 0.25); transform: translateY(-1px); }
+        /* شريط الأقسام الثابت */
+        .categories-nav { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; position: sticky; top: 0; background: #070707; z-index: 100; border-bottom: 1px solid #222; }
+        .category-btn { background: var(--card-bg); color: var(--text-light); border: 1px solid #333; padding: 10px 20px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; font-weight: bold; -webkit-tap-highlight-color: transparent; }
+        .category-btn.active { background: var(--gold); color: var(--bg-dark); }
 
-        .menu-wrapper { padding: 20px; max-width: 550px; margin: 0 auto; }
-        .page-section { display: none; }
-        .page-section.active-page { display: block; animation: smoothSlideIn 0.4s forwards; }
+        .menu-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        
+        /* إخفاء الأقسام برمجياً لإظهار قسم واحد فقط في كل مرة */
+        .menu-section { display: none; }
+        .menu-section.active-section { display: block; animation: fadeIn 0.3s ease-in-out; }
 
-        @keyframes smoothSlideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .grid-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--text-pure); display: flex; align-items: center; gap: 8px; }
-        .grid-title::before { content: ''; display: inline-block; width: 6px; height: 20px; background: var(--neon-amber); border-radius: 3px; }
+        .section-title { font-size: 18px; color: var(--gold-light); margin-bottom: 15px; border-right: 3px solid var(--gold); padding-right: 8px; }
+        .menu-item { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
+        .item-title { font-size: 16px; font-weight: bold; }
+        .item-price { color: var(--gold); font-weight: bold; font-size: 14px; margin-top: 4px; }
         
-        .food-card { background: var(--bg-card-premium); border-radius: 24px; padding: 16px; margin-bottom: 20px; border: 1px solid #1f2335; display: flex; gap: 16px; align-items: center; position: relative; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .food-card:hover { border-color: rgba(255, 183, 3, 0.3); transform: translateY(-2px); }
-        
-        .img-wrapper { position: relative; width: 105px; height: 105px; flex-shrink: 0; }
-        .card-img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; border: 1px solid #2a2f4a; }
-        .badge-premium { position: absolute; top: -6px; right: -6px; background: var(--neon-coral); color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+        .quantity-control { display: flex; align-items: center; gap: 12px; background: #000; padding: 4px 10px; border-radius: 20px; border: 1px solid #333; }
+        .q-btn { background: none; border: none; color: var(--gold); font-size: 18px; font-weight: bold; cursor: pointer; width: 24px; }
+        .q-num { font-size: 14px; font-weight: bold; min-width: 15px; text-align: center; }
 
-        .card-details { flex: 1; }
-        .card-name { font-size: 17px; font-weight: 700; color: var(--text-pure); margin-bottom: 4px; }
-        .card-desc { font-size: 12px; color: var(--text-dimmed); line-height: 1.6; margin-bottom: 10px; min-height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        .card-meta { display: flex; justify-content: space-between; align-items: center; }
-        .card-price { color: var(--neon-amber); font-weight: 900; font-size: 17px; }
-        
-        .counter-widget { display: flex; align-items: center; gap: 12px; background: #090a0f; padding: 6px 12px; border-radius: 14px; border: 1px solid #22263a; }
-        .ctrl-btn { background: none; border: none; color: var(--neon-amber); font-size: 20px; font-weight: 700; cursor: pointer; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; user-select: none; }
-        .count-display { font-size: 15px; font-weight: 700; min-width: 18px; text-align: center; }
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #121212; border-top: 2px solid var(--gold); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; z-index: 99; }
+        .btn-order { background: var(--success); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        .docked-cart-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(19, 21, 32, 0.95); backdrop-filter: blur(15px); border: 1px solid var(--soft-border); padding: 16px 22px; display: flex; justify-content: space-between; align-items: center; max-width: 520px; margin: 0 auto; z-index: 99; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border-radius: 24px; }
-        .total-info-label { font-size: 12px; color: var(--text-dimmed); }
-        .total-amount { font-size: 22px; font-weight: 900; color: var(--neon-amber); margin-top: 2px; }
-        .submit-order-btn { background: linear-gradient(135deg, var(--neon-amber), var(--neon-coral)); color: #000; border: none; padding: 14px 28px; border-radius: 16px; font-weight: 900; cursor: pointer; font-size: 15px; box-shadow: 0 6px 20px rgba(251, 133, 0, 0.3); }
-
-        /* ستايل المودال (النافذة المنبثقة) لتعديل المنتجات */
-        .popup-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5, 5, 8, 0.92); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        .popup-box { background: var(--bg-card-premium); border: 1px solid var(--soft-border); border-radius: 28px; padding: 30px 25px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
-        .address-field, .admin-select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #2a2f4a; background: #090a0f; color: #fff; text-align: right; font-size: 14px; margin-bottom: 12px; outline: none; }
-        .action-confirm-btn { background: linear-gradient(135deg, var(--neon-amber), var(--neon-coral)); color: #000; border: none; padding: 14px; border-radius: 14px; font-weight: 900; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
-        .action-cancel-link { color: var(--text-dimmed); font-size: 14px; cursor: pointer; margin-top: 15px; display: inline-block; text-decoration: none; }
-
-        /* زر إدارة المنيو في أسفل الصفحة */
-        .admin-trigger-btn { text-align: center; margin: 20px 0; }
-        .admin-link { color: var(--text-dimmed); font-size: 13px; text-decoration: underline; cursor: pointer; }
-        
-        /* أزرار الحذف والتعديل داخل كارت المشرف */
-        .admin-actions { display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid #1f2335; padding-top: 10px; }
-        .admin-btn-del { background: #d90429; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
-        .admin-btn-edit { background: #028090; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; text-align: center; }
+        .input-table { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; text-align: center; font-size: 18px; margin: 15px 0; font-weight: bold; }
+        .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+        .close-modal { color: var(--text-muted); font-size: 13px; cursor: pointer; margin-top: 15px; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <div id="app-viewport">
-        <div class="premium-header">
-            <div class="brand-title">حليم <span>بسمايا</span></div>
-            <div class="brand-badge">🔥 نظام منيو ذكي ذاتي التحكم</div>
+    <div id="main-app">
+        <div class="restaurant-header">
+            <div class="restaurant-name">حليم بسمايا</div>
+            <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 منيو المائدة الرقمي</div>
         </div>
 
-        <div class="nav-scroll-container">
-            <div class="categories-grid">
-                <button class="nav-tab-btn active-tab" onclick="navigatePage('premium-beef', this)">👑 سبيشال لحم</button>
-                <button class="nav-tab-btn" onclick="navigatePage('crispy-chicken', this)">🍗 دجاج كريسبي</button>
-                <button class="nav-tab-btn" onclick="navigatePage('loaded-sides', this)">🍟 مقبلات وجوانب</button>
-                <button class="nav-tab-btn" onclick="navigatePage('cool-drinks', this)">🥤 بارد وسوفت</button>
-            </div>
+        <div class="categories-nav">
+            <button class="category-btn active" onclick="switchPage('hareesa', this)">🥣 الهريسة</button>
+            <button class="category-btn" onclick="switchPage('drinks', this)">🥤 المشروبات</button>
+            <button class="category-btn" onclick="switchPage('sweets', this)">🍰 الحلويات</button>
+            <button class="category-btn" onclick="switchPage('appetizers', this)">🥗 المقبلات</button>
         </div>
 
-        <div class="menu-wrapper">
-            <div id="premium-beef" class="page-section active-page">
-                <h2 class="grid-title">برجر اللحم الفاخر ع الفحم</h2>
-                <div id="beef-target"></div>
+        <div class="menu-container">
+            
+            <div id="hareesa" class="menu-section active-section">
+                <h2 class="section-title">قسم الهريسة الفاخرة</h2>
+                <div id="hareesa-items"></div>
             </div>
 
-            <div id="crispy-chicken" class="page-section">
-                <h2 class="grid-title">وجبات السوبر كريسبي والدجاج</h2>
-                <div id="chicken-target"></div>
+            <div id="drinks" class="menu-section">
+                <h2 class="section-title">مشروبات غازية باردة</h2>
+                <div id="drinks-items"></div>
             </div>
 
-            <div id="loaded-sides" class="page-section">
-                <h2 class="grid-title">المقبلات والبطاطا المحملة بالجبن</h2>
-                <div id="sides-target"></div>
+            <div id="sweets" class="menu-section">
+                <h2 class="section-title">قسم الحلويات والتحلية</h2>
+                <div id="sweets-items"></div>
             </div>
 
-            <div id="cool-drinks" class="page-section">
-                <h2 class="grid-title">مشروبات غازية ومنعشة</h2>
-                <div id="drinks-target"></div>
+            <div id="appetizers" class="menu-section">
+                <h2 class="section-title">قسم المقبلات والشوربات</h2>
+                <div id="appetizers-items"></div>
             </div>
+
         </div>
 
-        <!-- زر المشرف الخفي/السفلي -->
-        <div class="admin-trigger-btn">
-            <span class="admin-link" onclick="openAdminPanel()">⚙️ تسجيل دخول صاحب المطعم (تعديل الأسعار والمنتجات)</span>
-        </div>
-
-        <div class="docked-cart-bar">
+        <div class="cart-bar">
             <div>
-                <span class="total-info-label">الحساب الحالي</span>
-                <div id="ui-total-amount" class="total-amount">0 د.ع</div>
+                <span style="font-size: 13px; color: var(--text-muted);">إجمالي الحساب:</span>
+                <div id="cart-total" style="font-size: 18px; font-weight: bold; color: var(--gold);">0 د.ع</div>
             </div>
-            <button class="submit-order-btn" onclick="triggerCheckout()">مراجعة الطلب 🛒</button>
+            <button class="btn-order" onclick="openCheckoutModal()">إرسال الطلب عبر الواتساب 🛒</button>
         </div>
     </div>
 
-    <!-- نافذة الزبون (طلب) -->
-    <div id="checkout-popup" class="popup-modal">
-        <div class="popup-box">
-            <h3>تأكيد طلبك الحار 🧾</h3>
-            <p style="margin-top: 8px; color: var(--text-dimmed); font-size: 14px;">مجموع حسابك هو: <span id="popup-total" style="color: var(--neon-amber); font-weight: 900;">0</span> د.ع</p>
-            <input type="text" id="delivery-location" class="address-field" placeholder="أين موقعك؟ (رقم العمارة أو الطاولة)" required>
-            <button class="action-confirm-btn" onclick="finalizeWhatsAppOrder()">إرسال الطلب عبر واتساب</button>
-            <span class="action-cancel-link" onclick="closeCheckout()">الرجوع لتعديل الطلب</span>
-        </div>
-    </div>
-
-    <!-- نافذة لوحة التحكم الخاصة بصاحب المطعم -->
-    <div id="admin-popup" class="popup-modal">
-        <div class="popup-box">
-            <h3 style="color: var(--neon-amber); margin-bottom: 15px;">لوحة تحكم إدارة المنيو ⚙️</h3>
-            <div id="admin-form">
-                <input type="hidden" id="edit-item-id">
-                <label style="display:block; text-align:right; font-size:12px; margin-bottom:4px;">القسم الأساسي:</label>
-                <select id="item-category" class="admin-select">
-                    <option value="premium-beef">👑 سبيشال لحم</option>
-                    <option value="crispy-chicken">🍗 دجاج كريسبي</option>
-                    <option value="loaded-sides">🍟 مقبلات وجوانب</option>
-                    <option value="cool-drinks">🥤 بارد وسوفت</option>
-                </select>
-                <input type="text" id="item-name" class="address-field" placeholder="اسم الوجبة (مثال: برجر لافا)">
-                <input type="number" id="item-price" class="address-field" placeholder="السعر بالدينار العراقي (مثال: 6000)">
-                <input type="text" id="item-desc" class="address-field" placeholder="وصف الوجبة والمكونات بدقة">
-                <input type="text" id="item-tag" class="address-field" placeholder="شارة مميزة (مثال: الأكثر طلباً، جديد)">
-                <input type="text" id="item-img" class="address-field" placeholder="رابط صورة الوجبة (يمكن تركه افتراضي)">
-                
-                <button class="action-confirm-btn" onclick="saveItemChanges()">حفظ المنتج الجديد / التعديلات ✅</button>
-                <span class="action-cancel-link" onclick="closeAdminPanel()">إغلاق لوحة التحكم</span>
-            </div>
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <h3>تأكيد الطلب 🧾</h3>
+            <p style="margin-top: 10px; color: var(--text-muted);">إجمالي الحساب: <span id="modal-total" style="color: var(--gold); font-weight: bold;">0</span> د.ع</p>
+            <input type="number" id="table-number" class="input-table" placeholder="اكتب رقم طاولتك هنا" required>
+            <button class="btn-confirm" onclick="sendOrderToWhatsApp()">تأكيد وإرسال للمطعم</button>
+            <span class="close-modal" onclick="closeCheckoutModal()">إلغاء</span>
         </div>
     </div>
 
     <script>
-        const TARGET_WHATSAPP = "9647748841353"; 
-        const ADMIN_PASSWORD = "1234"; // رمز الدخول للوحة التحكم
+        const WHATSAPP_NUMBER = "9647748841353"; 
 
-        // الداتا الافتراضية للمنيو (في حال تشغيل التطبيق لأول مرة)
-        const defaultMenu = {
-            'premium-beef': [
-                { id: 101, name: "برجر بريميوم كلاسيك", desc: "لحم عراقي فريش، خس امريكي، مخلل مقرمش، صوص هليم الخاص وبصل مكرمل", price: 5000, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300", tag: "الأكثر طلباً" },
-                { id: 102, name: "برجر شيدر لافا العجيب", desc: "ينفجر بصوص جبنة الشيدر الهولندية السائلة مع طبقة مزدوجة من اللحم المشوي", price: 6500, img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=300", tag: "جديد" }
+        // هيكلية قائمة الطعام الكاملة (30 صنفاً بالأسعار المطلوبة)
+        const menuData = {
+            hareesa: [
+                { id: 1, name: "صحن هريسة بالدهن الحر واللحم", price: 5000 },
+                { id: 2, name: "صحن هريسة ملوكي مضاعف اللحم", price: 5000 },
+                { id: 3, name: "صحن هريسة بالمكسرات والدهن الحر", price: 5000 },
+                { id: 4, name: "سفري هريسة عائلي وسط", price: 5000 },
+                { id: 5, name: "صحن هريسة بالدارسين والقشطة", price: 5000 }
             ],
-            'crispy-chicken': [
-                { id: 201, name: "برجر كريسبي ديناميت", desc: "صدر دجاج مقرمش جداً، تتبيلة حارة، صوص هاني ماسترد، وخس هولندي طازج", price: 5000, img: "https://images.unsplash.com/photo-1627662236973-4f8259fa2441?w=300", tag: "سبايسي" }
+            drinks: [
+                { id: 6, name: "بيبسي بارد علبة", price: 500 },
+                { id: 7, name: "سفن أب بارد علبة", price: 500 },
+                { id: 8, name: "ميرندا برتقال علبة", price: 500 },
+                { id: 9, name: "ميرندا حمضيات علبة", price: 500 },
+                { id: 10, name: "ماء معدني بارد نقي", price: 500 }
             ],
-            'loaded-sides': [
-                { id: 301, name: "بطاطا كريسبي مبهرة", desc: "أصابع البطاطا الذهبية الكبيرة مع بهارات المطعم السرية المقرمشة", price: 2000, img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300", tag: "كلاسيك" }
+            sweets: [
+                { id: 11, name: "ماعون مشكل بقلاوة عراقية", price: 5000 },
+                { id: 12, name: "صحن كنافة نابلسية بالجبن خشنة", price: 5000 },
+                { id: 13, name: "صحن كنافة ناعمة بين نارين", price: 5000 },
+                { id: 14, name: "ماعون زلابية وحلاوة جكليتية", price: 5000 },
+                { id: 15, name: "صحن بورمة بالفستق الحلبي", price: 5000 },
+                { id: 16, name: "كيكة الزعفران بالحليب الفاخرة", price: 5000 },
+                { id: 17, name: "صحن حلاوة دهينة نجفية أصلية", price: 5000 },
+                { id: 18, name: "أم علي بالمكسرات والقشطة حارة", price: 5000 },
+                { id: 19, name: "ماعون عوامات (لقمة القاضي) عسل", price: 5000 },
+                { id: 20, name: "صحن حلاوة شعرية بالهيل والزبادي", price: 5000 }
             ],
-            'cool-drinks': [
-                { id: 401, name: "بيبسي علبة مثلج", desc: "مشروب غازي بارد ومنعش يكمل الوجبة الكريسبي", price: 500, img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300", tag: "غازي بارد" }
+            appetizers: [
+                { id: 21, name: "صحن مقبلات مشكل كبب وسمبوسك", price: 5000 },
+                { id: 22, name: "ماعون حمص بطحينة بالزيتون", price: 5000 },
+                { id: 23, name: "ماعون متبل باذنجان مشوي بالرمان", price: 2500 }, // ملاحظة: يمكنك تغيير الأسعار هنا بأي وقت
+                { id: 24, name: "صحن بابا غنوج عراقي أصيل", price: 5000 },
+                { id: 25, name: "جلاي مقبلات روسية فاخرة", price: 5000 },
+                { id: 26, name: "ماعون تبولة لبنانية فريش", price: 5000 },
+                { id: 27, name: "ماعون سلطة سيزر بالدجاج مقرمش", price: 5000 },
+                { id: 28, name: "صحن جاجيك بالخيار والنعناع البارد", price: 5000 },
+                { id: 29, name: "كبة حلب مقرمشة (سيرفس 4 قطع)", price: 5000 },
+                { id: 30, name: "شوربة عدس ساخنة مع خبز محمص", price: 5000 }
             ]
         };
 
-        // جلب البيانات المخزنة محلياً أو استخدام الافتراضية
-        let dynamicMenu = JSON.parse(localStorage.getItem('hakeem_menu_data')) || defaultMenu;
-        let userCart = {};
-        let productMap = {};
-        let isAdminLoggedIn = false;
+        let cart = {};
+        let allItemsFlattened = {};
 
-        function initAppMenu() {
-            productMap = {}; 
-            const categories = ['premium-beef', 'crispy-chicken', 'loaded-sides', 'cool-drinks'];
+        // توليد الأصناف داخل الواجهة أوتوماتيكياً من المصفوفة
+        function renderMenu() {
+            for (let category in menuData) {
+                const container = document.getElementById(`${category}-items`);
+                container.innerHTML = "";
+                menuData[category].forEach(item => {
+                    allItemsFlattened[item.id] = item; // لحفظ بيانات الصنف للوصول السريع
+                    
+                    const div = document.createElement('div');
+                    div.className = "menu-item";
+                    div.innerHTML = `
+                        <div>
+                            <div class="item-title">${item.name}</div>
+                            <div class="item-price">${item.price.toLocaleString()} د.ع</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="q-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                            <span class="q-num" id="qty-${item.id}">0</span>
+                            <button class="q-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // دالة التبديل السحري بين الصفحات (إخفاء الأقسام الأخرى تماماً)
+        function switchPage(sectionId, element) {
+            document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
             
-            categories.forEach(category => {
-                const targetContainer = document.getElementById(`${category}-target`);
-                targetContainer.innerHTML = "";
-                
-                if(dynamicMenu[category] && dynamicMenu[category].length > 0) {
-                    dynamicMenu[category].forEach(item => {
-                        productMap[item.id] = item; 
-                        
-                        const card = document.createElement('div');
-                        card.className = "food-card";
-                        card.innerHTML = `
-                            <div class="img-wrapper">
-                                <img src="${item.img || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300'}" class="card-img">
-                                <span class="badge-premium">${item.tag || 'وجبة'}</span>
-                            </div>
-                            <div class="card-details">
-                                <div class="card-name">${item.name}</div>
-                                <div class="card-desc">${item.desc}</div>
-                                <div class="card-meta">
-                                    <div class="card-price">${item.price.toLocaleString()} د.ع</div>
-                                    <div class="counter-widget">
-                                        <button class="ctrl-btn" onclick="modifyCartQty(${item.id}, -1)">-</button>
-                                        <span class="count-display" id="count-view-${item.id}">0</span>
-                                        <button class="ctrl-btn" onclick="modifyCartQty(${item.id}, 1)">+</button>
-                                    </div>
-                                </div>
-                                ${isAdminLoggedIn ? `
-                                <div class="admin-actions">
-                                    <button class="admin-btn-edit" onclick="setupEditItem('${category}', ${item.id})">تعديل السعر/البيانات ✏️</button>
-                                    <button class="admin-btn-del" onclick="deleteItem('${category}', ${item.id})">حذف الصنف 🗑️</button>
-                                </div>` : ''}
-                            </div>
-                        `;
-                        targetContainer.appendChild(card);
-                    });
-                } else {
-                    targetContainer.innerHTML = `<p style="color:var(--text-dimmed); font-size:14px;">لا توجد أصناف في هذا القسم حالياً.</p>`;
-                }
-            });
+            document.getElementById(sectionId).classList.add('active-section');
+            element.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'instant' }); // إرجاع السكرول لأعلى الصفحة الجديدة فوراً
         }
 
-        function navigatePage(targetId, btnElement) {
-            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active-tab'));
-            document.getElementById(targetId).classList.add('active-page');
-            btnElement.classList.add('active-tab');
+        function updateQty(id, change) {
+            if (!cart[id]) cart[id] = 0;
+            cart[id] += change;
+            if (cart[id] <= 0) delete cart[id];
+            document.getElementById(`qty-${id}`).innerText = cart[id] || 0;
+            updateCartTotal();
         }
 
-        function modifyCartQty(id, value) {
-            if (!userCart[id]) userCart[id] = 0;
-            userCart[id] += value;
-            if (userCart[id] <= 0) delete userCart[id];
-            document.getElementById(`count-view-${id}`).innerText = userCart[id] || 0;
-            refreshCartTotals();
+        function updateCartTotal() {
+            let total = 0;
+            for (let id in cart) total += cart[id] * allItemsFlattened[id].price;
+            document.getElementById('cart-total').innerText = total.toLocaleString() + " د.ع";
+            document.getElementById('modal-total').innerText = total.toLocaleString();
         }
 
-        function refreshCartTotals() {
-            let grandTotal = 0;
-            for (let id in userCart) {
-                if(productMap[id]) grandTotal += userCart[id] * productMap[id].price;
-            }
-            document.getElementById('ui-total-amount').innerText = grandTotal.toLocaleString() + " د.ع";
-            document.getElementById('popup-total').innerText = grandTotal.toLocaleString();
+        function openCheckoutModal() {
+            let total = 0;
+            for (let id in cart) total += cart[id];
+            if (total === 0) { alert("الرجاء إضافة أصناف أولاً!"); return; }
+            document.getElementById('checkout-modal').style.display = 'flex';
         }
 
-        /* إدارة المشرف (صاحب المطعم) */
-        function openAdminPanel() {
-            if (!isAdminLoggedIn) {
-                let pass = prompt("الرجاء إدخال كلمة مرور الإدارة لدخول لوحة التحكم:");
-                if (pass === ADMIN_PASSWORD) {
-                    isAdminLoggedIn = true;
-                    alert("تم تسجيل الدخول بنجاح! يمكنك الآن تعديل وإضافة وحذف المنتجات مباشرة.");
-                    initAppMenu();
-                } else {
-                    alert("كلمة المرور خاطئة!");
-                    return;
-                }
-            }
-            document.getElementById('admin-popup').style.display = 'flex';
-        }
+        function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
 
-        function closeAdminPanel() {
-            document.getElementById('admin-popup').style.display = 'none';
-            resetAdminForm();
-        }
-
-        function resetAdminForm() {
-            document.getElementById('edit-item-id').value = "";
-            document.getElementById('item-name').value = "";
-            document.getElementById('item-price').value = "";
-            document.getElementById('item-desc').value = "";
-            document.getElementById('item-tag').value = "";
-            document.getElementById('item-img').value = "";
-        }
-
-        function setupEditItem(category, id) {
-            let item = dynamicMenu[category].find(p => p.id === id);
-            if(item) {
-                document.getElementById('edit-item-id').value = item.id;
-                document.getElementById('item-category').value = category;
-                document.getElementById('item-name').value = item.name;
-                document.getElementById('item-price').value = item.price;
-                document.getElementById('item-desc').value = item.desc;
-                document.getElementById('item-tag').value = item.tag;
-                document.getElementById('item-img').value = item.img;
-                document.getElementById('admin-popup').style.display = 'flex';
-            }
-        }
-
-        function saveItemChanges() {
-            const id = document.getElementById('edit-item-id').value;
-            const category = document.getElementById('item-category').value;
-            const name = document.getElementById('item-name').value;
-            const price = parseInt(document.getElementById('item-price').value);
-            const desc = document.getElementById('item-desc').value;
-            const tag = document.getElementById('item-tag').value;
-            const img = document.getElementById('item-img').value;
-
-            if(!name || !price) { alert("يرجى كتابة الاسم والسعر على الأقل!"); return; }
-
-            if(id) {
-                // وضع التعديل: البحث عن العنصر في كل الأقسام وحذفه من مكانه القديم أولاً لمنع التكرار عند تغيير القسم
-                for (let cat in dynamicMenu) {
-                    dynamicMenu[cat] = dynamicMenu[cat].filter(p => p.id != id);
-                }
-                dynamicMenu[category].push({ id: parseInt(id), name, desc, price, img, tag });
-            } else {
-                // وضع إضافة صنف جديد تماماً
-                const newId = Date.now();
-                dynamicMenu[category].push({ id: newId, name, desc, price, img, tag });
-            }
-
-            localStorage.setItem('hakeem_menu_data', JSON.stringify(dynamicMenu));
-            alert("تم حفظ التعديلات بنجاح في المنيو!");
-            closeAdminPanel();
-            initAppMenu();
-        }
-
-        function deleteItem(category, id) {
-            if(confirm("هل أنت متأكد من رغبتك في حذف هذا الصنف نهائياً من المنيو؟")) {
-                dynamicMenu[category] = dynamicMenu[category].filter(p => p.id !== id);
-                localStorage.setItem('hakeem_menu_data', JSON.stringify(dynamicMenu));
-                initAppMenu();
-            }
-        }
-
-        function triggerCheckout() {
-            let totalItems = 0;
-            for (let id in userCart) totalItems += userCart[id];
-            if (totalItems === 0) { alert("السلة فارغة! أضف بعض المنتجات أولاً."); return; }
-            document.getElementById('checkout-popup').style.display = 'flex';
-        }
-
-        function closeCheckout() { document.getElementById('checkout-popup').style.display = 'none'; }
-
-        function finalizeWhatsAppOrder() {
-            const deliveryLocation = document.getElementById('delivery-location').value;
-            if (!deliveryLocation) { alert("يرجى كتابة الموقع لتوصيل الطلب!"); return; }
+        function sendOrderToWhatsApp() {
+            const tableNum = document.getElementById('table-number').value;
+            if (!tableNum) { alert("يجب كتابة رقم الطاولة!"); return; }
             
-            let orderLines = [];
-            let grandTotal = 0;
-            for (let id in userCart) {
-                if(productMap[id]) {
-                    orderLines.push(`• ${productMap[id].name} [العدد: ${userCart[id]}]`);
-                    grandTotal += userCart[id] * productMap[id].price;
-                }
+            let itemsDetails = [];
+            let total = 0;
+            for (let id in cart) {
+                itemsDetails.push(`• ${allItemsFlattened[id].name} (عدد ${cart[id]})`);
+                total += cart[id] * allItemsFlattened[id].price;
             }
 
-            let text = `🔥 *طلب برجر من مطعم حليم بسمايا* 🔥\n\n`;
-            text += `📍 *الموقع:* ${deliveryLocation}\n`;
-            text += `📝 *الوجبات:*\n${orderLines.join('\n')}\n\n`;
-            text += `💰 *الحساب الإجمالي:* ${grandTotal.toLocaleString()} د.ع\n`;
+            let textMessage = `🔔 *طلب جديد من مطعم حليم بسمايا* 🔔\n\n`;
+            textMessage += `📍 *طاولة رقم:* ${tableNum}\n`;
+            textMessage += `📝 *الطلبات:*\n${itemsDetails.join('\n')}\n\n`;
+            textMessage += `💰 *الحساب الكلي:* ${total.toLocaleString()} د.ع\n`;
+            textMessage += `⏰ *الوقت:* ${new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}`;
 
-            const encoded = encodeURIComponent(text);
-            closeCheckout();
-            window.location.href = `https://api.whatsapp.com/send?phone=${TARGET_WHATSAPP}&text=${encoded}`;
+            const encodedMessage = encodeURIComponent(textMessage);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMessage}`;
+            
+            closeCheckoutModal();
+            window.location.href = whatsappUrl;
         }
 
-        initAppMenu();
+        // تشغيل البناء الفوري عند فتح الصفحة
+        renderMenu();
     </script>
 </body>
 </html>
