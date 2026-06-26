@@ -13,6 +13,7 @@
             --text-light: #ffffff;
             --text-muted: #b3b3b3;
             --success: #28a745;
+            --info: #17a2b8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -53,8 +54,12 @@
         #captain-panel { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
         .captain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
         .order-card { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--gold); }
-        .order-card.received { border-left-color: var(--success); opacity: 0.7; }
-        .btn-receive { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .order-card.preparing { border-left-color: var(--info); }
+        .order-card.delivered { border-left-color: var(--success); opacity: 0.5; }
+        
+        .btn-status { color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-left: 8px; font-size: 13px; }
+        .btn-prep { background: var(--info); }
+        .btn-deliv { background: var(--success); }
         
         .captain-login-trigger { font-size: 12px; color: #333; text-align: left; padding: 8px; cursor: pointer; background: #111; display: inline-block; border-radius: 5px; margin-top: 10px; }
     </style>
@@ -165,7 +170,6 @@
     <audio id="bell-sound" src="https://assets.mixkit.co/active_storage/sfx/911/911-200.wav" preload="auto"></audio>
 
     <script>
-        // السيرفر السحابي المفتوح والآمن
         const DB_URL = "https://halim-bismaya-default-rtdb.firebaseio.com/orders.json";
 
         let cart = {};
@@ -220,11 +224,11 @@
                 items: itemsDetails.join(' + '),
                 total: total.toLocaleString() + " د.ع",
                 status: "جديد",
-                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
+                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit', second:'2-digit'}),
+                timestamp: Date.now() // لحساب وقت الصلاحية وحذف الطلب القديم تلقائياً
             };
 
             try {
-                // إرسال مباشر ومستقر بدون قيود
                 await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}.json`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -259,6 +263,7 @@
             if (password === "1234") {
                 document.getElementById('main-app').style.display = 'none';
                 document.getElementById('captain-panel').style.display = 'block';
+                cleanOldOrders(); // تنظيف تلقائي للبيانات بمجرد دخول الكابتن لشاشته
                 loadCaptainOrders();
                 setInterval(loadCaptainOrders, 3000);
             } else {
@@ -290,31 +295,64 @@
 
                 container.innerHTML = "";
                 orders.reverse().forEach(order => {
+                    let cardClass = "order-card";
+                    if(order.status === "قيد التحضير") cardClass += " preparing";
+                    if(order.status === "تم التوصيل") cardClass += " delivered";
+
                     const card = document.createElement('div');
-                    card.className = `order-card ${order.status === 'مستلم' ? 'received' : ''}`;
+                    card.className = cardClass;
                     card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light);">
-                            <span>طاولة رقم: ${order.table}</span>
-                            <span>الوقت: ${order.time}</span>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light); margin-bottom:8px;">
+                            <span>طاولة رقم: ${order.table || 'غير محدد'}</span>
+                            <span>وقت الإرسال: ${order.time || '00:00'}</span>
                         </div>
-                        <p style="margin: 8px 0; font-size:15px;">الطلب: <b>${order.items}</b></p>
-                        <div style="font-size:14px; color:var(--text-muted)">الحساب الكلي: <span style="color:var(--gold)">${order.total}</span></div>
-                        ${order.status === 'جديد' ? `<button class="btn-receive" onclick="markAsReceived('${order.id}')">تم استلام الطلب ✓</button>` : `<div style="color:var(--success); font-size:12px; font-weight:bold; margin-top:5px;">✓ تم الاستلام وبدأ التحضير</div>`}
+                        <p style="margin: 8px 0; font-size:15px; color:#fff;">الطلب: <b>${order.items || 'فارغ'}</b></p>
+                        <div style="font-size:14px; color:var(--text-muted); margin-bottom:10px;">الحساب الكلي: <span style="color:var(--gold)">${order.total || '0 د.ع'}</span></div>
+                        <div id="actions-${order.id}">
+                            ${order.status === 'جديد' ? `
+                                <button class="btn-status btn-prep" onclick="updateOrderStatus('${order.id}', 'قيد التحضير')">بدء التحضير 👨‍🍳</button>
+                            ` : ''}
+                            ${order.status === 'قيد التحضير' ? `
+                                <span style="color:var(--info); font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">⏳ قيد التحضير في المطبخ...</span>
+                                <button class="btn-status btn-deliv" onclick="updateOrderStatus('${order.id}', 'تم التوصيل')">تم التوصيل للزبون 🍽️</button>
+                            ` : ''}
+                            ${order.status === 'تم التوصيل' ? `
+                                <span style="color:var(--success); font-size:13px; font-weight:bold;">✓ تم تسليم الطلب وإغلاقه</span>
+                            ` : ''}
+                        </div>
                     `;
                     container.appendChild(card);
                 });
             } catch (e) { console.log("خطأ بالاتصال بالسيرفر"); }
         }
 
-        async function markAsReceived(orderId) {
+        async function updateOrderStatus(orderId, newStatus) {
             try {
                 await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}/status.json`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify("مستلم")
+                    body: JSON.stringify(newStatus)
                 });
                 loadCaptainOrders();
-            } catch (e) { alert("فشل تحديث الحالة، تأكد من الإنترنت!"); }
+            } catch (e) { alert("فشل تحديث الحالة!"); }
+        }
+
+        // ميزة الحذف التلقائي الذكي: تمسح أي طلب عمره أكثر من 24 ساعة للمحافظة على مساحة السيرفر مجانية للأبد
+        async function cleanOldOrders() {
+            try {
+                let res = await fetch(DB_URL);
+                let data = await res.json();
+                if (!data) return;
+                
+                const oneDayInMs = 24 * 60 * 60 * 1000;
+                const now = Date.now();
+
+                Object.keys(data).forEach(async (key) => {
+                    if (data[key].timestamp && (now - data[key].timestamp > oneDayInMs)) {
+                        await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${key}.json`, { method: "DELETE" });
+                    }
+                });
+            } catch (e) { console.log("خطأ في التنظيف الدوري"); }
         }
     </script>
 </body>
