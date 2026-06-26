@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سيستم مطعم حليم بسمايا الذكي</title>
+    <title>منيو مطعم حليم بسمايا</title>
     <style>
         :root {
             --bg-dark: #070707;
@@ -13,7 +13,6 @@
             --text-light: #ffffff;
             --text-muted: #b3b3b3;
             --success: #28a745;
-            --info: #17a2b8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -47,21 +46,6 @@
         .input-table { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; text-align: center; font-size: 18px; margin: 15px 0; font-weight: bold; }
         .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
         .close-modal { color: var(--text-muted); font-size: 13px; cursor: pointer; margin-top: 15px; display: inline-block; }
-
-        .timer-screen { display: none; text-align: center; padding: 40px 20px; max-width: 500px; margin: 50px auto; background: var(--card-bg); border-radius: 15px; border: 1px solid var(--gold); }
-        .timer-circle { font-size: 48px; color: var(--gold); font-weight: bold; margin: 20px 0; }
-
-        #captain-panel { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .captain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
-        .order-card { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--gold); }
-        .order-card.preparing { border-left-color: var(--info); }
-        .order-card.delivered { border-left-color: var(--success); opacity: 0.5; }
-        
-        .btn-status { color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-left: 8px; font-size: 13px; }
-        .btn-prep { background: var(--info); }
-        .btn-deliv { background: var(--success); }
-        
-        .captain-login-trigger { font-size: 12px; color: #333; text-align: left; padding: 8px; cursor: pointer; background: #111; display: inline-block; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -69,91 +53,71 @@
     <div id="main-app">
         <div class="restaurant-header">
             <div class="restaurant-name">حليم بسمايا</div>
-            <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 12 ظهراً - 12 ليلاً</div>
-            <div class="captain-login-trigger" onclick="openCaptainPanel()">🔑 دخول كابتن الصالة</div>
+            <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 المنيو الرقمي المباشر</div>
         </div>
 
-        <div id="customer-view">
-            <div class="categories-nav">
-                <a href="#hareesa" class="category-btn active">🥣 هريسة</a>
-                <a href="#appetizers" class="category-btn">🥗 مقبلات</a>
-                <a href="#drinks" class="category-btn">🥤 مشروبات</a>
-            </div>
+        <div class="categories-nav">
+            <a href="#hareesa" class="category-btn active">🥣 هريسة</a>
+            <a href="#appetizers" class="category-btn">🥗 مقبلات</a>
+            <a href="#drinks" class="category-btn">🥤 مشروبات</a>
+        </div>
 
-            <div class="menu-container">
-                <div id="hareesa" class="menu-section">
-                    <h2 class="section-title">قسم الهريسة</h2>
-                    <div class="menu-item" data-id="1">
-                        <div>
-                            <div class="item-title">صحن هريسة بالدهن الحر</div>
-                            <div class="item-desc">باللحم والدهن الحر والدارسين الأصلي</div>
-                            <div class="item-price">3,000 د.ع</div>
-                        </div>
-                        <div class="quantity-control">
-                            <button class="q-btn" onclick="updateQty(1, -1)">-</button>
-                            <span class="q-num" id="qty-1">0</span>
-                            <button class="q-btn" onclick="updateQty(1, 1)">+</button>
-                        </div>
+        <div class="menu-container">
+            <div id="hareesa" class="menu-section">
+                <h2 class="section-title">قسم الهريسة</h2>
+                <div class="menu-item" data-id="1">
+                    <div>
+                        <div class="item-title">صحن هريسة بالدهن الحر</div>
+                        <div class="item-desc">باللحم والدهن الحر والدارسين الأصلي</div>
+                        <div class="item-price">3,000 د.ع</div>
                     </div>
-                </div>
-
-                <div id="appetizers" class="menu-section">
-                    <h2 class="section-title">قسم المقبلات</h2>
-                    <div class="menu-item" data-id="2">
-                        <div>
-                            <div class="item-title">ماعون مقبلات مشكل</div>
-                            <div class="item-desc">حمص بطحينة، متبل، تبولة</div>
-                            <div class="item-price">2,500 د.ع</div>
-                        </div>
-                        <div class="quantity-control">
-                            <button class="q-btn" onclick="updateQty(2, -1)">-</button>
-                            <span class="q-num" id="qty-2">0</span>
-                            <button class="q-btn" onclick="updateQty(2, 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="drinks" class="menu-section">
-                    <h2 class="section-title">مشروبات غازية</h2>
-                    <div class="menu-item" data-id="3">
-                        <div>
-                            <div class="item-title">بيبسي بارد</div>
-                            <div class="item-desc">علبة مبردة</div>
-                            <div class="item-price">500 د.ع</div>
-                        </div>
-                        <div class="quantity-control">
-                            <button class="q-btn" onclick="updateQty(3, -1)">-</button>
-                            <span class="q-num" id="qty-3">0</span>
-                            <button class="q-btn" onclick="updateQty(3, 1)">+</button>
-                        </div>
+                    <div class="quantity-control">
+                        <button class="q-btn" onclick="updateQty(1, -1)">-</button>
+                        <span class="q-num" id="qty-1">0</span>
+                        <button class="q-btn" onclick="updateQty(1, 1)">+</button>
                     </div>
                 </div>
             </div>
 
-            <div class="cart-bar">
-                <div>
-                    <span style="font-size: 13px; color: var(--text-muted);">إجمالي الحساب:</span>
-                    <div id="cart-total" style="font-size: 18px; font-weight: bold; color: var(--gold);">0 د.ع</div>
+            <div id="appetizers" class="menu-section">
+                <h2 class="section-title">قسم المقبلات</h2>
+                <div class="menu-item" data-id="2">
+                    <div>
+                        <div class="item-title">ماعون مقبلات مشكل</div>
+                        <div class="item-desc">حمص بطحينة، متبل، تبولة</div>
+                        <div class="item-price">2,500 د.ع</div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="q-btn" onclick="updateQty(2, -1)">-</button>
+                        <span class="q-num" id="qty-2">0</span>
+                        <button class="q-btn" onclick="updateQty(2, 1)">+</button>
+                    </div>
                 </div>
-                <button class="btn-order" onclick="openCheckoutModal()">إتـمـام الـطـلـب 🛒</button>
+            </div>
+
+            <div id="drinks" class="menu-section">
+                <h2 class="section-title">مشروبات غازية</h2>
+                <div class="menu-item" data-id="3">
+                    <div>
+                        <div class="item-title">بيبسي بارد</div>
+                        <div class="item-desc">علبة مبردة</div>
+                        <div class="item-price">500 د.ع</div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="q-btn" onclick="updateQty(3, -1)">-</button>
+                        <span class="q-num" id="qty-3">0</span>
+                        <button class="q-btn" onclick="updateQty(3, 1)">+</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="timer-screen" class="timer-screen">
-            <h2>تم إرسال طلبك بنجاح! 🎉</h2>
-            <p style="color: var(--text-muted); margin-top: 10px;">يرجى الانتظار، طلبك قيد التحضير الآن.</p>
-            <div class="timer-circle" id="countdown">15:00</div>
-            <p style="color: var(--gold-light);">ينتهي الوقت ويصلك الطلب فقط!</p>
-        </div>
-    </div>
-
-    <div id="captain-panel">
-        <div class="captain-header">
-            <h2>شاشة كابتن الصالة 🤵‍♂️</h2>
-            <button onclick="logoutCaptain()" style="padding: 5px 10px; background: #dc3545; color: #fff; border:none; border-radius: 5px; cursor:pointer;">خروج</button>
-        </div>
-        <div id="orders-list">
-            <p style="color: var(--text-muted); text-align: center;">جاري تحميل الطلبات الحية...</p>
+        <div class="cart-bar">
+            <div>
+                <span style="font-size: 13px; color: var(--text-muted);">إجمالي الحساب:</span>
+                <div id="cart-total" style="font-size: 18px; font-weight: bold; color: var(--gold);">0 د.ع</div>
+            </div>
+            <button class="btn-order" onclick="openCheckoutModal()">إرسال الطلب عبر الواتساب 🛒</button>
         </div>
     </div>
 
@@ -162,15 +126,14 @@
             <h3>تأكيد الطلب 🧾</h3>
             <p style="margin-top: 10px; color: var(--text-muted);">إجمالي الحساب: <span id="modal-total" style="color: var(--gold); font-weight: bold;">0</span> د.ع</p>
             <input type="number" id="table-number" class="input-table" placeholder="اكتب رقم طاولتك هنا" required>
-            <button class="btn-confirm" id="submit-btn" onclick="submitOrderToServer()">تأكيد الشراء وإرسال الطلب</button>
+            <button class="btn-confirm" onclick="sendOrderToWhatsApp()">تأكيد وإرسال للمطعم</button>
             <span class="close-modal" onclick="closeCheckoutModal()">إلغاء</span>
         </div>
     </div>
 
-    <audio id="bell-sound" src="https://assets.mixkit.co/active_storage/sfx/911/911-200.wav" preload="auto"></audio>
-
     <script>
-        const DB_URL = "https://halim-bismaya-default-rtdb.firebaseio.com/orders.json";
+        // تم تحديث رقم واتساب المطعم بنجاح هنا
+        const WHATSAPP_NUMBER = "9647748841353"; 
 
         let cart = {};
         const menuItems = {
@@ -203,156 +166,28 @@
 
         function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
 
-        async function submitOrderToServer() {
+        function sendOrderToWhatsApp() {
             const tableNum = document.getElementById('table-number').value;
             if (!tableNum) { alert("يجب كتابة رقم الطاولة!"); return; }
             
-            document.getElementById('submit-btn').innerText = "جاري الإرسال...";
-            document.getElementById('submit-btn').disabled = true;
-
             let itemsDetails = [];
             let total = 0;
             for (let id in cart) {
-                itemsDetails.push(`${menuItems[id].name} (x${cart[id]})`);
+                itemsDetails.push(`• ${menuItems[id].name} (عدد ${cart[id]})`);
                 total += cart[id] * menuItems[id].price;
             }
 
-            const orderId = "id_" + Date.now();
-            const newOrder = {
-                id: orderId,
-                table: tableNum,
-                items: itemsDetails.join(' + '),
-                total: total.toLocaleString() + " د.ع",
-                status: "جديد",
-                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit', second:'2-digit'}),
-                timestamp: Date.now() // لحساب وقت الصلاحية وحذف الطلب القديم تلقائياً
-            };
+            let textMessage = `🔔 *طلب جديد من مطعم حليم بسمايا* 🔔\n\n`;
+            textMessage += `📍 *طاولة رقم:* ${tableNum}\n`;
+            textMessage += `📝 *الطلبات:*\n${itemsDetails.join('\n')}\n\n`;
+            textMessage += `💰 *الحساب الكلي:* ${total.toLocaleString()} د.ع\n`;
+            textMessage += `⏰ *الوقت:* ${new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}`;
 
-            try {
-                await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}.json`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newOrder)
-                });
-
-                closeCheckoutModal();
-                document.getElementById('customer-view').style.display = 'none';
-                document.getElementById('timer-screen').style.display = 'block';
-                startTimer(15 * 60, document.getElementById('countdown'));
-            } catch (e) {
-                alert("حدث خطأ بالاتصال، حاول مجدداً!");
-                document.getElementById('submit-btn').innerText = "تأكيد الشراء وإرسال الطلب";
-                document.getElementById('submit-btn').disabled = false;
-            }
-        }
-
-        function startTimer(duration, display) {
-            let timer = duration, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-                display.textContent = minutes + ":" + seconds;
-                if (--timer < 0) { display.textContent = "وصل الطلب بالهنا والشفا!"; }
-            }, 1000);
-        }
-
-        function openCaptainPanel() {
-            const password = prompt("ادخل الرقم السري الخاص بكابتن الصالة:");
-            if (password === "1234") {
-                document.getElementById('main-app').style.display = 'none';
-                document.getElementById('captain-panel').style.display = 'block';
-                cleanOldOrders(); // تنظيف تلقائي للبيانات بمجرد دخول الكابتن لشاشته
-                loadCaptainOrders();
-                setInterval(loadCaptainOrders, 3000);
-            } else {
-                alert("رقم سري خاطئ!");
-            }
-        }
-
-        function logoutCaptain() { location.reload(); }
-
-        let localOrdersCount = 0;
-
-        async function loadCaptainOrders() {
-            try {
-                let res = await fetch(DB_URL);
-                let data = await res.json();
-                
-                const container = document.getElementById('orders-list');
-                if (!data) {
-                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">لا توجد طلبات جديدة حالياً...</p>`;
-                    return;
-                }
-
-                let orders = Object.values(data);
-                
-                if (orders.length > localOrdersCount && localOrdersCount !== 0) {
-                    document.getElementById('bell-sound').play().catch(e => {});
-                }
-                localOrdersCount = orders.length;
-
-                container.innerHTML = "";
-                orders.reverse().forEach(order => {
-                    let cardClass = "order-card";
-                    if(order.status === "قيد التحضير") cardClass += " preparing";
-                    if(order.status === "تم التوصيل") cardClass += " delivered";
-
-                    const card = document.createElement('div');
-                    card.className = cardClass;
-                    card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--gold-light); margin-bottom:8px;">
-                            <span>طاولة رقم: ${order.table || 'غير محدد'}</span>
-                            <span>وقت الإرسال: ${order.time || '00:00'}</span>
-                        </div>
-                        <p style="margin: 8px 0; font-size:15px; color:#fff;">الطلب: <b>${order.items || 'فارغ'}</b></p>
-                        <div style="font-size:14px; color:var(--text-muted); margin-bottom:10px;">الحساب الكلي: <span style="color:var(--gold)">${order.total || '0 د.ع'}</span></div>
-                        <div id="actions-${order.id}">
-                            ${order.status === 'جديد' ? `
-                                <button class="btn-status btn-prep" onclick="updateOrderStatus('${order.id}', 'قيد التحضير')">بدء التحضير 👨‍🍳</button>
-                            ` : ''}
-                            ${order.status === 'قيد التحضير' ? `
-                                <span style="color:var(--info); font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">⏳ قيد التحضير في المطبخ...</span>
-                                <button class="btn-status btn-deliv" onclick="updateOrderStatus('${order.id}', 'تم التوصيل')">تم التوصيل للزبون 🍽️</button>
-                            ` : ''}
-                            ${order.status === 'تم التوصيل' ? `
-                                <span style="color:var(--success); font-size:13px; font-weight:bold;">✓ تم تسليم الطلب وإغلاقه</span>
-                            ` : ''}
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (e) { console.log("خطأ بالاتصال بالسيرفر"); }
-        }
-
-        async function updateOrderStatus(orderId, newStatus) {
-            try {
-                await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${orderId}/status.json`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newStatus)
-                });
-                loadCaptainOrders();
-            } catch (e) { alert("فشل تحديث الحالة!"); }
-        }
-
-        // ميزة الحذف التلقائي الذكي: تمسح أي طلب عمره أكثر من 24 ساعة للمحافظة على مساحة السيرفر مجانية للأبد
-        async function cleanOldOrders() {
-            try {
-                let res = await fetch(DB_URL);
-                let data = await res.json();
-                if (!data) return;
-                
-                const oneDayInMs = 24 * 60 * 60 * 1000;
-                const now = Date.now();
-
-                Object.keys(data).forEach(async (key) => {
-                    if (data[key].timestamp && (now - data[key].timestamp > oneDayInMs)) {
-                        await fetch(`https://halim-bismaya-default-rtdb.firebaseio.com/orders/${key}.json`, { method: "DELETE" });
-                    }
-                });
-            } catch (e) { console.log("خطأ في التنظيف الدوري"); }
+            const encodedMessage = encodeURIComponent(textMessage);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMessage}`;
+            
+            closeCheckoutModal();
+            window.location.href = whatsappUrl;
         }
     </script>
 </body>
